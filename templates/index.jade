@@ -1,0 +1,20 @@
+
+extend layout
+
+append head
+	title Tables
+
+block content
+	div(ng-controller="TableCtrl")
+		h1 Tables
+		table.table
+			thead
+				th Id
+				th Name
+			tbody
+				tr(ng-repeat="table in tables track by $index")
+					td {{ table.id }}
+					td {{ table.name }}
+
+append afterbody
+	script(src="/js/controllers/tableCtrl.js")
