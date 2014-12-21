@@ -23,6 +23,7 @@ func tablesRouter(r martini.Router) {
 
 func tableRouter(r martini.Router) {
 	r.Get("", getTableHandler, getTable)
+	r.Delete("", getTableHandler, removeTable)
 }
 
 func getTableHandler(res http.ResponseWriter, c martini.Context, params martini.Params) {
@@ -32,7 +33,7 @@ func getTableHandler(res http.ResponseWriter, c martini.Context, params martini.
 		return
 	}
 
-	table := models.Table{Id: id}
+	table := models.TableExport{Table: models.Table{Id: id},}
 	if err := table.Get(); err != nil {
 		res.WriteHeader(http.StatusNotFound)
 		return
@@ -45,11 +46,11 @@ func getTableHandler(res http.ResponseWriter, c martini.Context, params martini.
 func getAllTables(res http.ResponseWriter, r render.Render) {
 	tables, err := models.GetAllTables()
 	if err != nil {
+		log.Println(err)
 		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	log.Println(tables)
 	r.JSON(200, tables)
 }
 
@@ -66,6 +67,15 @@ func createTable(res http.ResponseWriter, r render.Render, table models.Table) {
 	r.JSON(200, table)
 }
 
-func getTable(r render.Render, table models.Table) {
+func getTable(r render.Render, table models.TableExport) {
 	r.JSON(200, table)
+}
+
+func removeTable(r render.Render, table models.TableExport) {
+	if err := table.Remove(); err != nil {
+		log.Println(err)
+		r.JSON(500, nil)
+	}
+
+	r.JSON(200, nil)
 }

@@ -3,8 +3,6 @@ package models
 
 import (
 	"lab.castawaylabs.com/orderchef/database"
-	"database/sql"
-	"log"
 )
 
 var (
@@ -27,46 +25,76 @@ var (
 type Table struct {
 	Id int `form:"id" json:"id"`
 
-	Type ConfigTableType
 	TypeId int `form:"type_id" json:"type_id" binding:"required"`
 
-	Name string `form:"name" json:"name" binding:"required"`
-	TableNumber sql.NullString `form:"table_number" json:"table_number"`
-	Location sql.NullString `form:"location" json:"location"`
+	Name *string `form:"name" json:"name" binding:"required"`
+	TableNumber *string `form:"table_number" json:"table_number"`
+	Location *string `form:"location" json:"location"`
 }
 
-func GetAllTables() ([]Table, error) {
+type TableExport struct {
+	Table
+	Type ConfigTableType `json:"type"`
+}
+
+func GetAllTables() ([]TableExport, error) {
 	db := database.Mysql()
 
-	rows, err := db.Query("select id, name, type_id, table_number, location from " + TableTable)
+	rows, err := db.Query(`
+		 select t.id, t.name, t.type_id, t.table_number, t.location, t_type.id, t_type.name
+		 from ` + TableTable + ` as t
+		 join ` + ConfigTableTypeTable + ` as t_type on t_type.id=t.type_id
+	`)
+
 	if err != nil {
-		return []Table{}, err
+		return []TableExport{}, err
 	}
 
 	defer rows.Close()
 
-	tables := []Table{}
+	tables := []TableExport{}
 	for rows.Next() {
-		table := Table{}
+		table := TableExport{}
 
-		err := rows.Scan(&table.Id, &table.Name, &table.TypeId, &table.TableNumber, &table.Location)
+		err := rows.Scan(&table.Id,
+			&table.Name,
+			&table.TypeId,
+			&table.TableNumber,
+			&table.Location,
+			&table.Type.Id,
+			&table.Type.Name,
+		)
+
 		if err != nil {
-			return []Table{}, err
+			return []TableExport{}, err
 		}
 
 		tables = append(tables, table)
-		log.Println(table)
 	}
-
-	log.Println("Tables:", tables)
 
 	return tables, rows.Err()
 }
 
-func (t *Table) Get() error {
+func (t *TableExport) Get() error {
 	db := database.Mysql()
 
-	if err := db.QueryRow("select id, name, type_id, table_number, location from " + TableTable + " where id = ?", t.Id).Scan(&t.Id, &t.Name, &t.TypeId, &t.TableNumber, &t.Location); err != nil {
+	query := `
+	 select t.id, t.name, t.type_id, t.table_number, t.location, t_type.id, t_type.name
+	 from ` + TableTable + ` as t
+	 join ` + ConfigTableTypeTable + ` as t_type on t_type.id=t.type_id
+	 where t.id = ?`
+
+	err := db.QueryRow(query, t.Id).Scan(
+		&t.Id,
+		&t.Name,
+		&t.TypeId,
+		&t.TableNumber,
+		&t.Location,
+		&t.Type.Id,
+		&t.Type.Name,
+	)
+
+	if err != nil {
 		return err
 	}
 
@@ -93,6 +121,25 @@ func (t *Table) Save() error {
 		}
 
 		t.Id = int(id)
+	}
+
+	return nil
+}
+
+func (t *Table) Remove() error {
+	db := database.Mysql()
+
+	if _, err := db.Exec("delete from " + TableTable + " where id = ?", t.Id); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (t *TableExport) GetTableType() error {
+	t.Type.Id = t.TypeId
+	if err := t.Type.Get(); err != nil {
+		return err
 	}
 
 	return nil

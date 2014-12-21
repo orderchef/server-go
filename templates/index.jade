@@ -2,19 +2,15 @@
 extend layout
 
 append head
-	title Tables
+	title Tests
 
 block content
-	div(ng-controller="TableCtrl")
-		h1 Tables
-		table.table
-			thead
-				th Id
-				th Name
-			tbody
-				tr(ng-repeat="table in tables track by $index")
-					td {{ table.id }}
-					td {{ table.name }}
+	div(ng-controller="TestCtrl")
+		div(ng-repeat="test in tests" style="max-height: 200px; overflow-y: scroll;" class="well")
+			h1(ng-class="{ 'text-success': test.success, 'text-danger': !test.success }" ng-if="test.hasRun" style="margin-top:0;") {{ test.name }} ({{ test.success }})
+			table.table(ng-repeat="v in test.results")
+				thead: th(ng-repeat="(k, val) in v") {{ k }}
+				tbody: tr: td(ng-repeat="(k, val) in v") {{ val }}
 
 append afterbody
-	script(src="/js/controllers/tableCtrl.js")
+	script(src="/js/controllers/testCtrl.js")
