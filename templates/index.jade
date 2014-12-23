@@ -6,11 +6,11 @@ append head
 
 block content
 	div(ng-controller="TestCtrl")
-		div(ng-repeat="test in tests" style="max-height: 200px; overflow-y: scroll;" class="well")
-			h1(ng-class="{ 'text-success': test.success, 'text-danger': !test.success }" ng-if="test.hasRun" style="margin-top:0;") {{ test.name }} ({{ test.success }})
-			table.table(ng-repeat="v in test.results")
-				thead: th(ng-repeat="(k, val) in v") {{ k }}
-				tbody: tr: td(ng-repeat="(k, val) in v") {{ val }}
+		div(ng-repeat="test in testResults track by $index" style="max-height: 200px; overflow-y: scroll; margin-top: 20px;" class="well")
+			h1(ng-class="{ 'text-success': test.success, 'text-danger': !test.success }" ng-if="test.hasRun" style="margin-top:0;") {{ test.name }}
+			table.table(ng-repeat="v in test.results track by $index")
+				thead: th(ng-repeat="(k, val) in v track by $index") {{ k }}
+				tbody: tr: td(ng-repeat="(k, val) in v track by $index") {{ val }}
 
 append afterbody
 	script(src="/js/controllers/testCtrl.js")
