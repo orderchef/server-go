@@ -1,3 +1,11 @@
+mixin test(ctrl)
+	div(ng-controller= ctrl)
+		div(ng-repeat="test in testResults track by $index" style="max-height: 200px; overflow-y: scroll; margin-top: 20px;" class="well")
+			h1(ng-class="{ 'text-success': test.success, 'text-danger': !test.success }" ng-if="test.hasRun" style="margin-top:0;") {{ test.name }}
+			table.table(ng-repeat="v in test.results track by $index")
+				thead: th(ng-repeat="(k, val) in v track by $index") {{ k }}
+				tbody: tr: td(ng-repeat="(k, val) in v track by $index") {{ val }}
+
 doctype
 html(ng-app="orderchef")
 	head
@@ -6,7 +14,7 @@ html(ng-app="orderchef")
 			//link(rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap-theme.min.css")
 
 	body
-		//-nav.navbar.navbar-default
+		nav.navbar.navbar-default
 			.container-fluid
 				ul.nav.navbar-nav
 					li: a(href="/") Tables
@@ -16,3 +24,4 @@ html(ng-app="orderchef")
 		block afterbody
 			script(src="/components/angular/angular.min.js")
 			script(src="/components/async/lib/async.js")
+			script(src="/js/controllers/testCtrl.js")

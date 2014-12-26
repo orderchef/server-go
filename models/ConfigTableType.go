@@ -73,3 +73,13 @@ func (tableType *ConfigTableType) Save() error {
 
 	return nil
 }
+
+func (tableType *ConfigTableType) Remove() error {
+	db := database.Mysql()
+
+	if _, err := db.Exec("delete from " + ConfigTableTypeTable + " where id = ?", tableType.Id); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -53,3 +53,12 @@ func createTableType(res http.ResponseWriter, r render.Render, tableType models.
 
 	r.JSON(200, tableType)
 }
+
+func deleteTableType(res http.ResponseWriter, r render.Render, tableType models.ConfigTableType) {
+	if err := tableType.Remove(); err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	res.WriteHeader(200)
+}

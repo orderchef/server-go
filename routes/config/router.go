@@ -13,5 +13,6 @@ func Router(r martini.Router) {
 		r.Get("/table-types", getAllTableTypes)
 		r.Post("/table-types", binding.Bind(models.ConfigTableType{}), createTableType)
 		r.Get("/table-type/:table_type_id", getTableTypeHandler, getTableType)
+		r.Delete("/table-type/:table_type_id", getTableTypeHandler, deleteTableType)
 	})
 }
