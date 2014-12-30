@@ -4,11 +4,12 @@ package database
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/coopernurse/gorp"
 )
 
-var mysql_db *sql.DB
+var mysql_db *gorp.DbMap
 
-func Mysql() *sql.DB {
+func Mysql() *gorp.DbMap {
 	if mysql_db == nil {
 		db, err := sql.Open("mysql", "root:@/orderchef?parseTime=true")
 
@@ -21,7 +22,7 @@ func Mysql() *sql.DB {
 			panic(err)
 		}
 
-		mysql_db = db
+		mysql_db = &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	}
 
 	return mysql_db

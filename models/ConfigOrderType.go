@@ -1,9 +1,16 @@
 
 package models
 
-var ConfigOrderTypeTable = "config__order_type"
+import (
+	"lab.castawaylabs.com/orderchef/database"
+)
 
 type ConfigOrderType struct {
-	Id uint
-	Name string
+	Id uint `db:"id"`
+	Name string `db:"name"`
+}
+
+func init() {
+	db := database.Mysql()
+	db.AddTableWithName(ConfigOrderType{}, "config__order_type").SetKeys(true, "id")
 }

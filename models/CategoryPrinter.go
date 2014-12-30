@@ -2,15 +2,17 @@
 package models
 
 import (
-	_ "lab.castawaylabs.com/orderchef/database"
+	"lab.castawaylabs.com/orderchef/database"
 )
 
-var CategoryPrinterTable = "category_printer"
-
 type CategoryPrinter struct {
-	PrinterId int
-	CategoryId int
+	PrinterId int `db:"printer_id" json:"printer_id"`
+	CategoryId int `db:"category_id" json:"category_id"`
 
-	Printer Printer
-	Category Category
+	Printer Printer `db:"-"`
+	Category Category `db:"-"`
+}
+
+func init() {
+	database.Mysql().AddTableWithName(CategoryPrinter{}, "category_printer")
 }

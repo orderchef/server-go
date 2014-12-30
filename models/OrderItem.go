@@ -1,14 +1,21 @@
 
 package models
 
-var OrderItemTable = "order__item"
+import (
+	"lab.castawaylabs.com/orderchef/database"
+)
 
 type OrderItem struct {
-	Id uint
+	Id int `db:"id"`
 
-	Item Item
-	ItemId uint
+	Item Item `db:"-"`
+	ItemId int `db:"item_id"`
 
-	Quantity uint
-	Notes string
+	Quantity int `db:"quantity"`
+	Notes string `db:"notes"`
+}
+
+func init() {
+	db := database.Mysql()
+	db.AddTableWithName(OrderItem{}, "order__item").SetKeys(true, "id")
 }

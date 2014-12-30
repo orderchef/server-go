@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	db := database.Mysql()
-	defer db.Close()
+	database.Mysql()
+	// defer db.Close()
 
 	m := martini.Classic()
 
@@ -21,7 +21,7 @@ func main() {
 		IndentJSON: true,
 	}))
 
-	m.Group("/api", routes.Route)
+	m.Group("/", routes.Route)
 
 	m.Use(martini.Static("templates", martini.StaticOptions{}))
 	m.Use(martini.Static("public", martini.StaticOptions{}))

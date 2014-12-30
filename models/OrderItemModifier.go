@@ -1,14 +1,21 @@
 
 package models
 
-var OrderItemModifierTable = "order__item_modifier"
+import (
+	"lab.castawaylabs.com/orderchef/database"
+)
 
 type OrderItemModifier struct {
-	Id uint
+	Id int `db:"id"`
 
-	OrderItem OrderItem
-	OrderItemId uint
+	OrderItem OrderItem `db:"-"`
+	OrderItemId int `db:"order_item_id"`
 
-	ModifierGroup ConfigModifierGroup
-	ModifierGroupId uint
+	ModifierGroup ConfigModifierGroup `db:"-"`
+	ModifierGroupId int `db:"modifier_group_id"`
+}
+
+func init() {
+	db := database.Mysql()
+	db.AddTableWithName(OrderItemModifier{}, "order__item_modifier").SetKeys(true, "id")
 }
