@@ -3,6 +3,8 @@ package main
 
 import (
 	_ "net/http"
+	_ "lab.castawaylabs.com/orderchef/models"
+
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"lab.castawaylabs.com/orderchef/routes"
@@ -10,7 +12,10 @@ import (
 )
 
 func main() {
-	database.Mysql()
+	db := database.Mysql()
+	if err := db.CreateTablesIfNotExists(); err != nil {
+		panic(err)
+	}
 	// defer db.Close()
 
 	m := martini.Classic()

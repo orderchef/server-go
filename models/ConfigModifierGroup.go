@@ -13,5 +13,5 @@ type ConfigModifierGroup struct {
 }
 
 func init() {
-	database.Mysql().AddTableWithName(ConfigModifierGroup{}, "config__modifier_group")
+	database.Mysql().AddTableWithName(ConfigModifierGroup{}, "config__modifier_group").SetKeys(true, "id")
 }

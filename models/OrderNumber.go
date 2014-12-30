@@ -6,5 +6,5 @@ import (
 )
 
 type OrderNumber struct {
-	Id uint
+	Id int
 }

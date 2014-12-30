@@ -6,7 +6,7 @@ import (
 )
 
 type Printer struct {
-	Id string `db:"id"`
+	Id int `db:"id"`
 	Name string `db:"name"`
 	Location string `db:"location"`
 }

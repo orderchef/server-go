@@ -7,12 +7,12 @@ import (
 
 type ConfigReceipts struct {
 	Printer Printer `db:"-"`
-	PrinterId uint `db:"printer_id"`
+	PrinterId int `db:"printer_id"`
 
 	Receipt string `db:"receipt"`
 }
 
 func init() {
 	db := database.Mysql()
-	db.AddTableWithName(ConfigReceipts{}, "config__receipt").SetKeys(true, "id")
+	db.AddTableWithName(ConfigReceipts{}, "config__receipt")
 }

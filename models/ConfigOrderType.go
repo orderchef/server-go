@@ -6,7 +6,7 @@ import (
 )
 
 type ConfigOrderType struct {
-	Id uint `db:"id"`
+	Id int `db:"id"`
 	Name string `db:"name"`
 }
 
