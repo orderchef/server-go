@@ -26,7 +26,7 @@ func main() {
 		IndentJSON: true,
 	}))
 
-	m.Group("/", routes.Route)
+	m.Group("", routes.Route)
 
 	m.Use(martini.Static("templates", martini.StaticOptions{}))
 	m.Use(martini.Static("public", martini.StaticOptions{}))
