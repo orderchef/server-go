@@ -61,7 +61,7 @@ func (t *Table) Save() error {
 func (t *Table) Remove() error {
 	db := database.Mysql()
 
-	if _, err := db.Delete(&t); err != nil {
+	if _, err := db.Delete(t); err != nil {
 		return err
 	}
 

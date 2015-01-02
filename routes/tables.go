@@ -12,10 +12,13 @@ import (
 )
 
 func tableRouter(r martini.Router) {
-	r.Get("/tables", getAllTables)
-	r.Post("/tables", binding.Bind(models.Table{}), addTable)
-	r.Put("/tables/:table_id", binding.Bind(models.Table{}), saveTable)
-	r.Delete("/tables/:table_id", deleteTable)
+	r.Group("/tables", func(tableRouter martini.Router) {
+		tableRouter.Get("", getAllTables)
+		tableRouter.Post("", binding.Bind(models.Table{}), addTable)
+		tableRouter.Get("/:table_id", getTable)
+		tableRouter.Put("/:table_id", binding.Bind(models.Table{}), saveTable)
+		tableRouter.Delete("/:table_id", deleteTable)
+	})
 }
 
 func getAllTables(res http.ResponseWriter, r render.Render) {
@@ -27,6 +30,22 @@ func getAllTables(res http.ResponseWriter, r render.Render) {
 	}
 
 	r.JSON(200, tables)
+}
+
+func getTable(res http.ResponseWriter, r render.Render, params martini.Params) {
+	table_id, err := getIntParam("table_id", params, res)
+	if err != nil {
+		return
+	}
+
+	table := models.Table{Id: table_id}
+	if err := table.Get(); err != nil {
+		log.Println(err)
+		res.WriteHeader(500)
+		return
+	}
+
+	r.JSON(200, table)
 }
 
 func addTable(res http.ResponseWriter, table models.Table) {
@@ -57,10 +76,8 @@ func saveTable(res http.ResponseWriter, table models.Table, params martini.Param
 }
 
 func deleteTable(res http.ResponseWriter, params martini.Params) {
-	table_id, err := strconv.Atoi(params["table_id"])
+	table_id, err := getIntParam("table_id", params, res)
 	if err != nil {
-		log.Println(err)
-		res.WriteHeader(400)
 		return
 	}
 
