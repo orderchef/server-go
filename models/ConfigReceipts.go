@@ -1,11 +1,18 @@
 
 package models
 
-var ConfigReceiptsTable = "config__receipt"
+import (
+	"lab.castawaylabs.com/orderchef/database"
+)
 
 type ConfigReceipts struct {
-	Printer Printer
-	PrinterId uint
+	Printer Printer `db:"-"`
+	PrinterId int `db:"printer_id"`
 
-	Receipt string
+	Receipt string `db:"receipt"`
+}
+
+func init() {
+	db := database.Mysql()
+	db.AddTableWithName(ConfigReceipts{}, "config__receipt")
 }

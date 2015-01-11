@@ -3,6 +3,8 @@ package main
 
 import (
 	_ "net/http"
+	_ "lab.castawaylabs.com/orderchef/models"
+
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"lab.castawaylabs.com/orderchef/routes"
@@ -11,7 +13,10 @@ import (
 
 func main() {
 	db := database.Mysql()
-	defer db.Close()
+	if err := db.CreateTablesIfNotExists(); err != nil {
+		panic(err)
+	}
+	// defer db.Close()
 
 	m := martini.Classic()
 
@@ -21,7 +26,7 @@ func main() {
 		IndentJSON: true,
 	}))
 
-	m.Group("/api", routes.Route)
+	m.Group("", routes.Route)
 
 	m.Use(martini.Static("templates", martini.StaticOptions{}))
 	m.Use(martini.Static("public", martini.StaticOptions{}))

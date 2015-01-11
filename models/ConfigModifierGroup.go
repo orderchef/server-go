@@ -1,11 +1,17 @@
 
 package models
 
-var ConfigModiferGroupTable = "config__modiifer_group"
+import (
+	"lab.castawaylabs.com/orderchef/database"
+)
 
 type ConfigModifierGroup struct {
-	Id int
+	Id int `db:"id"`
 
-	Name string
-	NumberRequired int
+	Name string `db:"name"`
+	NumberRequired int `db:"number_required"`
+}
+
+func init() {
+	database.Mysql().AddTableWithName(ConfigModifierGroup{}, "config__modifier_group").SetKeys(true, "id")
 }

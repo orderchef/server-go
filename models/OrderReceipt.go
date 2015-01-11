@@ -1,17 +1,24 @@
 
 package models
 
-var OrderReceiptTable = "order__receipt"
+import (
+	"lab.castawaylabs.com/orderchef/database"
+)
 
 type OrderReceipt struct {
-	Id int
+	Id int `db:"id"`
 
-	OrderGroup OrderGroup
-	OrderGroupId int
+	OrderGroup OrderGroup `db:"-"`
+	OrderGroupId int `db:"order_group_id"`
 
-	Printer Printer
-	PrinterId int
+	Printer Printer `db:"-"`
+	PrinterId int `db:"printer_id"`
 
-	Employee Employee
-	EmployeeId int
+	Employee Employee `db:"-"`
+	EmployeeId int `db:"employee_id"`
+}
+
+func init() {
+	db := database.Mysql()
+	db.AddTableWithName(OrderReceipt{}, "order__receipt").SetKeys(true, "id")
 }

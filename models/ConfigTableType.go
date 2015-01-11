@@ -2,82 +2,61 @@
 package models
 
 import (
-	"log"
 	"lab.castawaylabs.com/orderchef/database"
 )
 
-var ConfigTableTypeTable = "config__table_type"
-
 type ConfigTableType struct {
-	Id int `json:"id" form:"id"`
-	Name string `json:"name" form:"name" binding:"required"`
+	Id int `db:"id" json:"id" form:"id"`
+	Name string `db:"name" json:"name" form:"name" binding:"required"`
+}
+
+func init() {
+	db := database.Mysql()
+	db.AddTableWithName(ConfigTableType{}, "config__table_type").SetKeys(true, "id")
 }
 
 func GetAllTableTypes() ([]ConfigTableType, error) {
 	db := database.Mysql()
-	objs := []ConfigTableType{}
 
-	rows, err := db.Query("select id, name from " + ConfigTableTypeTable)
-	if err != nil {
-		return objs, err
+	var objs []ConfigTableType
+	if _, err := db.Select(&objs, "select * from config__table_type order by name"); err != nil {
+		return nil, err
 	}
 
-	defer rows.Close()
-
-	for rows.Next() {
-		obj := ConfigTableType{}
-
-		if err := rows.Scan(&obj.Id, &obj.Name); err != nil {
-			return objs, err
-		}
-
-		objs = append(objs, obj)
-	}
-
-	log.Println("Table Types:", objs)
-
-	return objs, rows.Err()
+	return objs, nil
 }
 
-func (tableType *ConfigTableType) Get() error {
+func (t *ConfigTableType) Get() error {
 	db := database.Mysql()
 
-	if err := db.QueryRow("select id, name from " + ConfigTableTypeTable + " where id = ?", tableType.Id).Scan(&tableType.Id, &tableType.Name); err != nil {
+	if err := db.SelectOne(&t, "select * from config__table_type where id=?", t.Id); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (tableType *ConfigTableType) Save() error {
+func (t *ConfigTableType) Save() error {
 	db := database.Mysql()
 
-	query := "update " + ConfigTableTypeTable + " set name = ?"
-	if tableType.Id == 0 {
-		query = "insert into " + ConfigTableTypeTable + " (name) values (?)"
+	var err error
+	if t.Id <= 0 {
+		err = db.Insert(t)
+	} else {
+		_, err = db.Update(t)
 	}
 
-	result, err := db.Exec(query, tableType.Name)
 	if err != nil {
 		return err
-	}
-
-	if tableType.Id == 0 {
-		id, err := result.LastInsertId()
-		if err != nil {
-			return err
-		}
-
-		tableType.Id = int(id)
 	}
 
 	return nil
 }
 
-func (tableType *ConfigTableType) Remove() error {
+func (t *ConfigTableType) Remove() error {
 	db := database.Mysql()
 
-	if _, err := db.Exec("delete from " + ConfigTableTypeTable + " where id = ?", tableType.Id); err != nil {
+	if _, err := db.Delete(t); err != nil {
 		return err
 	}
 

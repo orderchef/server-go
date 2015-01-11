@@ -1,3 +1,4 @@
+
 angular.module('orderchef')
 .controller('TableCtrl', ['$scope', '$http', 'TestService', function ($scope, $http, TestService) {
 	var tests = [];
@@ -6,12 +7,11 @@ angular.module('orderchef')
 		tests: [{
 			name: "Add Table",
 			test: function (done) {
-				$http.post('/api/config/table-types', {
+				$http.post('/config/table-types', {
 					name: "Table Type"
 				}).success(function (data) {
-					$http.get('/api/config/table-types')
-					.success(function (data) {
-						$http.post('/api/tables', {
+					$http.get('/config/table-types').success(function (data) {
+						$http.post('/tables', {
 							type_id: data[0].id,
 							name: "Test Table",
 							table_number: "two",
@@ -21,7 +21,7 @@ angular.module('orderchef')
 						}).error(function () {
 							done(false, []);
 						});
-					})
+					});
 				}).error(function (data) {
 					done(false, data);
 				});
@@ -29,16 +29,16 @@ angular.module('orderchef')
 		}, {
 			name: "Get All",
 			test: function (done) {
-				$http.get('/api/tables')
-				.success(function (data) {
+				$http.get('/tables').success(function (data) {
 					done(true, data);
+				}).error(function () {
+					done(false, []);
 				});
 			}
 		}, {
 			name: "Get Single",
 			test: function (done) {
-				$http.get('/api/table/' + tests[0].tests[1].results[0].id)
-				.success(function (data) {
+				$http.get('/tables/' + tests[0].tests[1].results[0].id).success(function (data) {
 					done(true, data);
 				}).error(function (data) {
 					done(false, data);
@@ -49,8 +49,7 @@ angular.module('orderchef')
 			test: function (done) {
 				var tables = tests[0].tests[1].results;
 				async.eachSeries(tables, function (table, cb) {
-					$http.delete('/api/table/' + table.id)
-					.success(function (data) {
+					$http.delete('/tables/' + table.id).success(function (data) {
 						cb(null);
 					}).error(function (data) {
 						cb(data);
@@ -67,4 +66,4 @@ angular.module('orderchef')
 	});
 
 	TestService.runTests($scope, tests);
-}])
+}]);
