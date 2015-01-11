@@ -1,9 +1,9 @@
 
 angular.module('orderchef')
-.controller('TableCtrl', ['$scope', '$http', 'TestService', function ($scope, $http, TestService) {
+.controller('OrdersGroupCtrl', ['$scope', '$http', 'TestService', function ($scope, $http, TestService) {
 	var tests = [];
 	tests.push({
-		name: "Tables",
+		name: "Orders (Group)",
 		tests: [{
 			name: "Add Table",
 			test: function (done) {

@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"net/http"
+	"database/sql"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"lab.castawaylabs.com/orderchef/models"
@@ -93,4 +94,33 @@ func Delete(res http.ResponseWriter, params martini.Params) {
 	} else {
 		res.WriteHeader(204)
 	}
+}
+
+func GetOrderGroup(res http.ResponseWriter, r render.Render, params martini.Params) {
+	table_id, err := utils.GetIntParam("table_id", params, res)
+	if err != nil {
+		return
+	}
+
+	table := models.Table{Id: table_id}
+	orderGroup := models.OrderGroup{TableId: table.Id}
+	err = orderGroup.GetByTableId()
+
+	statusCode := 200
+
+	if err == sql.ErrNoRows {
+		if err := orderGroup.Save(); err != nil {
+			log.Println(err)
+			res.WriteHeader(500)
+			return
+		}
+
+		statusCode = 201
+	} else if err != nil {
+		log.Println(err)
+		res.WriteHeader(500)
+		return
+	}
+
+	r.JSON(statusCode, orderGroup)
 }

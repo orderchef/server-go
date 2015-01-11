@@ -8,8 +8,8 @@ import (
 type OrderItem struct {
 	Id int `db:"id"`
 
-	Item Item `db:"-"`
 	ItemId int `db:"item_id"`
+	OrderId int `db:"order_id"`
 
 	Quantity int `db:"quantity"`
 	Notes string `db:"notes"`
