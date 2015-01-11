@@ -15,6 +15,12 @@ type Table struct {
 	Location *string `db:"location" form:"location" json:"location"`
 }
 
+type TableTypeExport struct {
+	Type_name string `json:"type_name" db:"name"`
+	Type_id int `json:"type_id" db:"id"`
+	Tables []Table `json:"tables" db:"tables"`
+}
+
 func init() {
 	db := database.Mysql()
 	db.AddTableWithName(Table{}, "table__items").SetKeys(true, "id")
@@ -29,6 +35,23 @@ func GetAllTables() ([]Table, error) {
 	}
 
 	return tables, nil
+}
+
+func GetAllTablesSorted() ([]TableTypeExport, error) {
+	db := database.Mysql()
+
+	var types []TableTypeExport
+	if _, err := db.Select(&types, "select * from config__table_type"); err != nil {
+		return nil, err
+	}
+
+	for i, t := range types {
+		if _, err := db.Select(&types[i].Tables, "select * from table__items where type_id=?", t.Type_id); err != nil {
+			return nil, err
+		}
+	}
+
+	return types, nil
 }
 
 func (t *Table) Get() error {

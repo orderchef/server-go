@@ -6,7 +6,7 @@ angular.module('orderchef')
 		tests: [{
 			name: "Add",
 			test: function (done) {
-				$http.post('/api/config/table-types', {
+				$http.post('/config/table-types', {
 					name: "Table Type"
 				}).success(function (data) {
 					done(true, data);
@@ -17,7 +17,7 @@ angular.module('orderchef')
 		}, {
 			name: "Get all",
 			test: function (done) {
-				$http.get('/api/config/table-types')
+				$http.get('/config/table-types')
 				.success(function (data) {
 					done(true, data);
 				}).error(function (data) {
@@ -27,7 +27,7 @@ angular.module('orderchef')
 		}, {
 			name: "Get Single",
 			test: function (done) {
-				$http.get('/api/config/table-type/' + tests[0].tests[1].results[0].id)
+				$http.get('/config/table-types/' + tests[0].tests[1].results[0].id)
 				.success(function (data) {
 					done(true, data);
 				}).error(function (data) {
@@ -39,7 +39,7 @@ angular.module('orderchef')
 			test: function (done) {
 				var objs = tests[0].tests[1].results;
 				async.eachSeries(objs, function (obj, cb) {
-					$http.delete('/api/config/table-type/' + obj.id)
+					$http.delete('/config/table-types/' + obj.id)
 					.success(function (data) {
 						cb(null);
 					}).error(function (data) {
