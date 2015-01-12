@@ -2,3 +2,5 @@ gin-bin
 public/components
 templates/*.html
 templates/**/*.html
+
+.vagrant
