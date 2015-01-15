@@ -11,8 +11,10 @@ import (
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
+// Get all categories
 func GetAll(res http.ResponseWriter, r render.Render) {
 	categories, err := models.GetAllCategories()
+	// if there's an error, its a server error..
 	if err != nil {
 		log.Println(err)
 		res.WriteHeader(500)
@@ -22,13 +24,16 @@ func GetAll(res http.ResponseWriter, r render.Render) {
 	r.JSON(200, categories)
 }
 
+// Fetch a single category
 func GetSingle(res http.ResponseWriter, r render.Render, params martini.Params) {
 	category_id, err := utils.GetIntParam("category_id", params, res)
 	if err != nil {
 		return
 	}
 
+	// Create category with Id property.
 	category := models.Category{Id: category_id}
+	// Fetch the other properties from the database (uses ID)
 	if err := category.Get(); err != nil {
 		log.Println(err)
 		res.WriteHeader(500)
@@ -38,6 +43,8 @@ func GetSingle(res http.ResponseWriter, r render.Render, params martini.Params) 
 	r.JSON(200, category)
 }
 
+// Create new category
+// the 'category' property is injected using the Bind service (from routes/main.go)
 func Add(res http.ResponseWriter, category models.Category) {
 	if err := category.Save(); err != nil {
 		log.Println(err)
@@ -47,6 +54,7 @@ func Add(res http.ResponseWriter, category models.Category) {
 	}
 }
 
+// Update category
 func Save(res http.ResponseWriter, category models.Category, params martini.Params) {
 	category_id, err := strconv.Atoi(params["category_id"])
 	if err != nil {
@@ -65,12 +73,14 @@ func Save(res http.ResponseWriter, category models.Category, params martini.Para
 	}
 }
 
+// Delete category
 func Delete(res http.ResponseWriter, params martini.Params) {
 	category_id, err := utils.GetIntParam("category_id", params, res)
 	if err != nil {
 		return
 	}
 
+	// Gorp looks at the Id (primary key) to delete the document
 	category := models.Category{Id: category_id}
 	if err := category.Remove(); err != nil {
 		log.Println(err)

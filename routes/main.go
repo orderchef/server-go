@@ -59,9 +59,12 @@ func ordersRouter(r martini.Router) {
 }
 
 func categoriesRouter(r martini.Router) {
+	// GET /categories -> Get all categories
 	r.Get("", categories.GetAll)
+	// bidning.Bind takes JSON/Argument POST
 	r.Post("", binding.Bind(models.Category{}), categories.Add)
 
+	// :category_id is a parameter
 	r.Get("/:category_id", categories.GetSingle)
 	r.Put("/:category_id", binding.Bind(models.Category{}), categories.Save)
 	r.Delete("/:category_id", categories.Delete)

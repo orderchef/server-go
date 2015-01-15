@@ -16,6 +16,7 @@ func init() {
 	db.AddTableWithName(Category{}, "category").SetKeys(true, "id")
 }
 
+// Fetch all categories from the database
 func GetAllCategories() ([]Category, error) {
 	db := database.Mysql()
 
@@ -27,6 +28,7 @@ func GetAllCategories() ([]Category, error) {
 	return types, nil
 }
 
+// Get single category
 func (category *Category) Get() error {
 	db := database.Mysql()
 
@@ -37,6 +39,7 @@ func (category *Category) Get() error {
 	return nil
 }
 
+// Save / update category
 func (category *Category) Save() error {
 	db := database.Mysql()
 
@@ -54,6 +57,7 @@ func (category *Category) Save() error {
 	return nil
 }
 
+// Remove category
 func (category *Category) Remove() error {
 	db := database.Mysql()
 
