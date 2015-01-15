@@ -8,6 +8,7 @@ import (
 	"lab.castawaylabs.com/orderchef/routes/tables"
 	"lab.castawaylabs.com/orderchef/routes/configTableType"
 	"lab.castawaylabs.com/orderchef/routes/orders"
+	"lab.castawaylabs.com/orderchef/routes/categories"
 )
 
 func Route(r martini.Router) {
@@ -15,6 +16,7 @@ func Route(r martini.Router) {
 	r.Group("/config", configRouter)
 	r.Group("/order-groups", orderGroupRouter)
 	r.Group("/orders", ordersRouter)
+	r.Group("/categories", categoriesRouter)
 }
 
 func tableRouter(r martini.Router) {
@@ -54,4 +56,16 @@ func ordersRouter(r martini.Router) {
 		orderRouter.Get("", orders.GetOrder)
 		orderRouter.Get("/items", orders.GetOrderItems)
 	})
+}
+
+func categoriesRouter(r martini.Router) {
+	// GET /categories -> Get all categories
+	r.Get("", categories.GetAll)
+	// bidning.Bind takes JSON/Argument POST
+	r.Post("", binding.Bind(models.Category{}), categories.Add)
+
+	// :category_id is a parameter
+	r.Get("/:category_id", categories.GetSingle)
+	r.Put("/:category_id", binding.Bind(models.Category{}), categories.Save)
+	r.Delete("/:category_id", categories.Delete)
 }
