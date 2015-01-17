@@ -1,0 +1,8 @@
+---
+- name: install go
+  apt: name=golang state=present
+
+- name: add go-path to the profile
+  copy:
+    content: 'export GOPATH=/orderchef/'
+    dest: '/etc/profile.d/gopath.sh'

@@ -16,18 +16,16 @@
         - mysql-client
         - python-mysqldb
 
-    - name: install go
-      apt: name=golang state=present
+    - name: create orderchef db
+      mysql_db: name=orderchef state=present
 
-    - name: add go-path to the profile
-      copy:
-        content: 'export GOPATH=/orderchef/'
-        dest: '/etc/profile.d/gopath.sh'
+    - include: tasks/golang.yml
+    - include: tasks/nodejs.yml
 
     - name: install server deps
       shell: /orderchef/src/lab.castawaylabs.com/orderchef/deps.sh
       environment:
         GOPATH: /orderchef/
 
-    - name: create orderchef db
-      mysql_db: name=orderchef state=present
+    - name: install jade
+      npm: name=jade global=yes state=present
