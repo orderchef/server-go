@@ -1,0 +1,33 @@
+---
+- name: set up orderchef server
+  hosts: all
+  sudo: yes
+
+  tasks:
+    - name: update system
+      apt: upgrade=full
+
+    - name: install infrastructure tools
+      apt: name={{item}} state=present
+      with_items:
+        - build-essential
+        - git
+        - mysql-server
+        - mysql-client
+        - python-mysqldb
+
+    - name: install go
+      apt: name=golang state=present
+
+    - name: add go-path to the profile
+      copy:
+        content: 'export GOPATH=/orderchef/'
+        dest: '/etc/profile.d/gopath.sh'
+
+    - name: install server deps
+      shell: /orderchef/src/lab.castawaylabs.com/orderchef/deps.sh
+      environment:
+        GOPATH: /orderchef/
+
+    - name: create orderchef db
+      mysql_db: name=orderchef state=present
