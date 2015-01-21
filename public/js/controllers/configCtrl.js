@@ -43,11 +43,11 @@ angular.module('orderchef')
 					.success(function (data) {
 						cb(null);
 					}).error(function (data) {
-						cb(data);
+						cb(new Error(obj.id + " Could not be deleted: " + data));
 					});
 				}, function(err) {
 					if (err) {
-						return done(false, { response: err })
+						return done(false, { response: err.toString() })
 					}
 
 					done(true, null);
