@@ -1,0 +1,31 @@
+---
+- name: set up orderchef server
+  hosts: all
+  sudo: yes
+
+  tasks:
+    - name: update system
+      apt: upgrade=full
+
+    - name: install infrastructure tools
+      apt: name={{item}} state=present
+      with_items:
+        - build-essential
+        - git
+        - mysql-server
+        - mysql-client
+        - python-mysqldb
+
+    - name: create orderchef db
+      mysql_db: name=orderchef state=present
+
+    - include: tasks/golang.yml
+    - include: tasks/nodejs.yml
+
+    - name: install server deps
+      shell: /orderchef/src/lab.castawaylabs.com/orderchef/deps.sh
+      environment:
+        GOPATH: /orderchef/
+
+    - name: install jade
+      npm: name=jade global=yes state=present
