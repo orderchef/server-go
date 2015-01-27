@@ -9,10 +9,10 @@ mixin test(ctrl)
 doctype
 html(ng-app="orderchef")
 	head
-		base(href="/tests/")
+		base(href="/site/tests/")
 		block head
-			link(rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css")
-			link(rel="stylesheet" href="/css/site.css")
+			link(rel="stylesheet" href="/assets/components/bootstrap/dist/css/bootstrap.min.css")
+			link(rel="stylesheet" href="/assets/css/site.css")
 
 	body
 		nav.navbar.navbar-default
@@ -35,8 +35,8 @@ html(ng-app="orderchef")
 		.container-fluid
 			block content
 		block afterbody
-			script(src="/components/jquery/dist/jquery.min.js")
-			script(src="/components/bootstrap/dist/js/bootstrap.min.js")
-			script(src="/components/angular/angular.min.js")
-			script(src="/components/async/lib/async.js")
-			script(src="/js/controllers/testCtrl.js")
+			script(src="/assets/components/jquery/dist/jquery.min.js")
+			script(src="/assets/components/bootstrap/dist/js/bootstrap.min.js")
+			script(src="/assets/components/angular/angular.min.js")
+			script(src="/assets/components/async/lib/async.js")
+			script(src="/assets/js/controllers/testCtrl.js")

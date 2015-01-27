@@ -27,7 +27,7 @@ angular.module('orderchef')
 		}, {
 			name: "Get Single",
 			test: function (done) {
-				$http.get('/config/table-types/' + tests[0].tests[1].results[0].id)
+				$http.get('/config/table-type/' + tests[0].tests[1].results[0].id)
 				.success(function (data) {
 					done(true, data);
 				}).error(function (data) {
@@ -39,7 +39,7 @@ angular.module('orderchef')
 			test: function (done) {
 				var objs = tests[0].tests[1].results;
 				async.eachSeries(objs, function (obj, cb) {
-					$http.delete('/config/table-types/' + obj.id)
+					$http.delete('/config/table-type/' + obj.id)
 					.success(function (data) {
 						cb(null);
 					}).error(function (data) {
