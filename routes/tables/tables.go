@@ -58,7 +58,7 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{})
+	c.JSON(201, table)
 }
 
 func Save(c *gin.Context) {

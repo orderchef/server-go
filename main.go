@@ -2,9 +2,6 @@
 package main
 
 import (
-	_ "net/http"
-	_ "lab.castawaylabs.com/orderchef/models"
-
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/routes"
 	"lab.castawaylabs.com/orderchef/database"

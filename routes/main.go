@@ -4,13 +4,16 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/routes/tables"
-	"lab.castawaylabs.com/orderchef/routes/configTableType"
+	"lab.castawaylabs.com/orderchef/routes/config"
+	"lab.castawaylabs.com/orderchef/routes/config/tableType"
 	"lab.castawaylabs.com/orderchef/routes/orders"
 	"lab.castawaylabs.com/orderchef/routes/categories"
 	"lab.castawaylabs.com/orderchef/routes/items"
 )
 
 func Route(r *gin.RouterGroup) {
+	r.GET("/ping", pong)
+
 	tableRouter(r)
 	configRouter(r.Group("/config"))
 	orderGroupRouter(r.Group("/order-groups"))
@@ -39,17 +42,20 @@ func tableRouter(r *gin.RouterGroup) {
 }
 
 func configRouter(r *gin.RouterGroup) {
+	r.GET("/settings", config.GetConfig)
+	r.POST("/settings", config.UpdateConfig)
+
 	ts := r.Group("/table-types")
 	{
-		ts.GET("", configTableType.GetAll)
-		ts.POST("", configTableType.Add)
+		ts.GET("", tableType.GetAll)
+		ts.POST("", tableType.Add)
 	}
 
 	t := r.Group("/table-type/:table_type_id")
 	{
-		t.GET("", configTableType.GetSingle)
-		t.PUT("", configTableType.Save)
-		t.DELETE("", configTableType.Delete)
+		t.GET("", tableType.GetSingle)
+		t.PUT("", tableType.Save)
+		t.DELETE("", tableType.Delete)
 	}
 }
 
@@ -100,4 +106,8 @@ func itemsRouter(r *gin.RouterGroup) {
 		t.PUT("", items.Save)
 		t.DELETE("", items.Delete)
 	}
+}
+
+func pong(c *gin.Context) {
+	c.String(200, "pong")
 }

@@ -1,5 +1,5 @@
 
-package configTableType
+package tableType
 
 import (
 	"github.com/gin-gonic/gin"
@@ -39,9 +39,9 @@ func Add(c *gin.Context) {
 
 	if err := tableType.Save(); err != nil {
 		utils.ServeError(c, err)
-	} else {
-		c.JSON(201, gin.H{})
 	}
+
+	c.JSON(201, tableType)
 }
 
 func Save(c *gin.Context) {
@@ -70,6 +70,7 @@ func Delete(c *gin.Context) {
 
 	if err := tableType.Remove(); err != nil {
 		utils.ServeError(c, err)
+		return
 	}
 
 	c.Abort(204)
