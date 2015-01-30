@@ -50,7 +50,10 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	tableType := models.ConfigTableType{Id: type_id}
+	tableType := models.ConfigTableType{}
+	c.Bind(&tableType)
+
+	tableType.Id = type_id
 
 	if err := tableType.Save(); err != nil {
 		utils.ServeError(c, err)

@@ -109,6 +109,7 @@ func GetOrderGroup(c *gin.Context) {
 	statusCode := 200
 
 	if err == sql.ErrNoRows {
+		// no results, create new group
 		if err := orderGroup.Save(); err != nil {
 			utils.ServeError(c, err)
 			return

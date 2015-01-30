@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/routes/tables"
 	"lab.castawaylabs.com/orderchef/routes/config"
+	"lab.castawaylabs.com/orderchef/routes/config/orderType"
 	"lab.castawaylabs.com/orderchef/routes/config/tableType"
 	"lab.castawaylabs.com/orderchef/routes/orders"
 	"lab.castawaylabs.com/orderchef/routes/categories"
@@ -56,6 +57,19 @@ func configRouter(r *gin.RouterGroup) {
 		t.GET("", tableType.GetSingle)
 		t.PUT("", tableType.Save)
 		t.DELETE("", tableType.Delete)
+	}
+
+	os := r.Group("/order-types")
+	{
+		os.GET("", orderType.GetAll)
+		os.POST("", orderType.Add)
+	}
+
+	o := r.Group("/order-type/:order_type_id")
+	{
+		o.GET("", orderType.GetSingle)
+		o.PUT("", orderType.Save)
+		o.DELETE("", orderType.Delete)
 	}
 }
 

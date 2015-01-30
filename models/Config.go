@@ -51,11 +51,38 @@ func GetConfig() (Config, error) {
 }
 
 func (config *Config) Save() error {
-	// db := database.Mysql()
+	isSetup := "0"
+	if config.IsSetup == true {
+		isSetup = "1"
+	}
+
+	keys := [4]DBConfig{
+		DBConfig{Name: "is_setup", Value: isSetup},
+		DBConfig{Name: "venue_name", Value: config.VenueName},
+		DBConfig{Name: "client_id", Value: config.ClientId},
+		DBConfig{Name: "api_key", Value: config.ApiKey},
+	}
+
+	for _, key := range keys {
+		if len(key.Value) == 0 {
+			continue
+		}
+
+		if err := key.Save(); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
 
-func (config *Config) SaveKey() error {
+func (config *DBConfig) Save() error {
+	db := database.Mysql()
+
+	_, err := db.Exec("insert into config (name, value) values (?, ?) on duplicate key update value=?", config.Name, config.Value, config.Value)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

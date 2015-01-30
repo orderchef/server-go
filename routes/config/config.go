@@ -8,7 +8,15 @@ import (
 )
 
 func UpdateConfig(c *gin.Context) {
+	config := models.Config{}
+	c.Bind(&config)
 
+	if err := config.Save(); err != nil {
+		utils.ServeError(c, err)
+		return
+	}
+
+	c.Abort(204)
 }
 
 func GetConfig(c *gin.Context) {
