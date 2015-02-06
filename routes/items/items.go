@@ -2,80 +2,77 @@
 package items
 
 import (
-	"log"
-	"strconv"
-	"net/http"
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/render"
+	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
-func GetAll(res http.ResponseWriter, r render.Render) {
+func GetAll(c *gin.Context) {
 	items, err := models.GetAllItems()
 	if err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(200, items)
+	c.JSON(200, items)
 }
 
-func GetSingle(res http.ResponseWriter, r render.Render, params martini.Params) {
-	item_id, err := utils.GetIntParam("item_id", params, res)
+func GetSingle(c *gin.Context) {
+	item_id, err := utils.GetIntParam("item_id", c)
 	if err != nil {
 		return
 	}
 
 	item := models.Item{Id: item_id}
 	if err := item.Get(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(200, item)
+	c.JSON(200, item)
 }
 
-func Add(res http.ResponseWriter, item models.Item) {
+func Add(c *gin.Context) {
+	item := models.Item{}
+	c.Bind(&item)
+
 	if err := item.Save(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(201)
-	}
-}
-
-func Save(res http.ResponseWriter, item models.Item, params martini.Params) {
-	item_id, err := strconv.Atoi(params["item_id"])
-	if err != nil {
-		log.Println(err)
-		res.WriteHeader(400)
+		utils.ServeError(c, err)
 		return
 	}
 
-	item.Id = item_id
-
-	if err := item.Save(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(204)
-	}
+	c.JSON(201, gin.H{})
 }
 
-func Delete(res http.ResponseWriter, params martini.Params) {
-	item_id, err := utils.GetIntParam("item_id", params, res)
+func Save(c *gin.Context) {
+	item_id, err := utils.GetIntParam("item_id", c)
 	if err != nil {
 		return
 	}
 
 	item := models.Item{Id: item_id}
-	if err := item.Remove(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(204)
+	c.Bind(&item)
+
+	if err := item.Save(); err != nil {
+		utils.ServeError(c, err)
+		return
 	}
+
+	c.Abort(204)
+}
+
+func Delete(c *gin.Context) {
+	item_id, err := utils.GetIntParam("item_id", c)
+	if err != nil {
+		return
+	}
+
+	item := models.Item{Id: item_id}
+
+	if err := item.Remove(); err != nil {
+		utils.ServeError(c, err)
+		return
+	}
+
+	c.Abort(204)
 }

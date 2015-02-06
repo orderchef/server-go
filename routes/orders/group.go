@@ -2,65 +2,65 @@
 package orders
 
 import (
-	"log"
-	"net/http"
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/render"
+	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
-func getGroupById(res http.ResponseWriter, params martini.Params) (models.OrderGroup, error) {
-	group_id, err := utils.GetIntParam("order_group_id", params, res)
+func getGroupById(c *gin.Context) (models.OrderGroup, error) {
+	group_id, err := utils.GetIntParam("order_group_id", c)
 	if err != nil {
 		return models.OrderGroup{}, err
 	}
 
 	group := models.OrderGroup{Id: group_id}
 	if err := group.Get(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return group, err
 	}
 
 	return group, nil
 }
 
-func GetGroup(res http.ResponseWriter, r render.Render, params martini.Params) {
-	group, err := getGroupById(res, params)
+func GetGroup(c *gin.Context) {
+	group, err := getGroupById(c)
 	if err != nil {
 		return
 	}
 
-	r.JSON(200, group)
+	c.JSON(200, group)
 }
 
-func GetGroupOrders(res http.ResponseWriter, r render.Render, params martini.Params) {
-	group, err := getGroupById(res, params)
+func GetGroupOrders(c *gin.Context) {
+	group, err := getGroupById(c)
 	if err != nil {
 		return
 	}
 
 	orders, err := group.GetOrders()
 	if err != nil {
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(200, orders)
+	c.JSON(200, orders)
 }
 
-func AddOrderToGroup(res http.ResponseWriter, order models.Order, params martini.Params, r render.Render) {
-	group, err := getGroupById(res, params)
+func AddOrderToGroup(c *gin.Context) {
+	group, err := getGroupById(c)
 	if err != nil {
 		return
 	}
 
+	order := models.Order{}
+	c.Bind(&order)
+
 	order.GroupId = group.Id
+
 	if err := order.Save(); err != nil {
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(201, order)
+	c.JSON(201, order)
 }

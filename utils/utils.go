@@ -4,17 +4,22 @@ package utils
 import (
 	"log"
 	"strconv"
-	"net/http"
-	"github.com/go-martini/martini"
+	"github.com/gin-gonic/gin"
 )
 
-func GetIntParam(name string, params martini.Params, res http.ResponseWriter) (int, error) {
-	intParam, err := strconv.Atoi(params[name])
+func GetIntParam(name string, c *gin.Context) (int, error) {
+	intParam, err := strconv.Atoi(c.Params.ByName(name))
 	if err != nil {
 		log.Println(err)
-		res.WriteHeader(400)
+		c.JSON(400, gin.H{})
 		return 0, err
 	}
 
 	return intParam, nil
+}
+
+func ServeError(c *gin.Context, err error) {
+	log.Println(err)
+	c.JSON(500, gin.H{})
+	return
 }

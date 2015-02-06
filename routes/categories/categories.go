@@ -2,31 +2,26 @@
 package categories
 
 import (
-	"log"
-	"strconv"
-	"net/http"
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/render"
+	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
 // Get all categories
-func GetAll(res http.ResponseWriter, r render.Render) {
+func GetAll(c *gin.Context) {
 	categories, err := models.GetAllCategories()
 	// if there's an error, its a server error..
 	if err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(200, categories)
+	c.JSON(200, categories)
 }
 
 // Fetch a single category
-func GetSingle(res http.ResponseWriter, r render.Render, params martini.Params) {
-	category_id, err := utils.GetIntParam("category_id", params, res)
+func GetSingle(c *gin.Context) {
+	category_id, err := utils.GetIntParam("category_id", c)
 	if err != nil {
 		return
 	}
@@ -35,47 +30,49 @@ func GetSingle(res http.ResponseWriter, r render.Render, params martini.Params) 
 	category := models.Category{Id: category_id}
 	// Fetch the other properties from the database (uses ID)
 	if err := category.Get(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(200, category)
+	c.JSON(200, category)
 }
 
 // Create new category
 // the 'category' property is injected using the Bind service (from routes/main.go)
-func Add(res http.ResponseWriter, category models.Category) {
-	if err := category.Save(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(201)
-	}
-}
+func Add(c *gin.Context) {
+	category := models.Category{}
+	c.Bind(&category)
 
-// Update category
-func Save(res http.ResponseWriter, category models.Category, params martini.Params) {
-	category_id, err := strconv.Atoi(params["category_id"])
-	if err != nil {
-		log.Println(err)
-		res.WriteHeader(400)
+	if err := category.Save(); err != nil {
+		utils.ServeError(c, err)
 		return
 	}
 
-	category.Id = category_id
+	c.JSON(201, gin.H{})
+}
+
+// Update category
+func Save(c *gin.Context) {
+	category_id, err := utils.GetIntParam("category_id", c)
+	if err != nil {
+		utils.ServeError(c, err)
+		return
+	}
+
+	category := models.Category{Id: category_id}
+	c.Bind(&category)
 
 	if err := category.Save(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(204)
+		utils.ServeError(c, err)
+		return
 	}
+
+	c.Abort(204)
 }
 
 // Delete category
-func Delete(res http.ResponseWriter, params martini.Params) {
-	category_id, err := utils.GetIntParam("category_id", params, res)
+func Delete(c *gin.Context) {
+	category_id, err := utils.GetIntParam("category_id", c)
 	if err != nil {
 		return
 	}
@@ -83,9 +80,9 @@ func Delete(res http.ResponseWriter, params martini.Params) {
 	// Gorp looks at the Id (primary key) to delete the document
 	category := models.Category{Id: category_id}
 	if err := category.Remove(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(204)
+		utils.ServeError(c, err)
+		return
 	}
+
+	c.Abort(204)
 }

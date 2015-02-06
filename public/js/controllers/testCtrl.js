@@ -1,6 +1,17 @@
 
 var app = angular.module('orderchef', [])
 
+app.config(function ($httpProvider) {
+	$httpProvider.interceptors.push(function ($q) {
+		return {
+			'request': function (config) {
+				config.url = '/api' + config.url;
+				return config || $q.when(config);
+			}
+		}
+	});
+});
+
 app.service('TestService', function() {
 	var self = this;
 

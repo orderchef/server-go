@@ -3,31 +3,26 @@ package tables
 
 import (
 	"log"
-	"strconv"
-	"net/http"
 	"database/sql"
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/render"
+	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
-func GetAll(res http.ResponseWriter, r render.Render) {
+func GetAll(c *gin.Context) {
 	tables, err := models.GetAllTables()
 	if err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(200, tables)
+	c.JSON(200, tables)
 }
 
-func GetAllSorted(res http.ResponseWriter, r render.Render) {
+func GetAllSorted(c *gin.Context) {
 	types, err := models.GetAllTablesSorted()
 	if err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
@@ -35,69 +30,74 @@ func GetAllSorted(res http.ResponseWriter, r render.Render) {
 		log.Println(len(ttype.Tables))
 	}
 
-	r.JSON(200, types)
+	c.JSON(200, types)
 }
 
-func GetSingle(res http.ResponseWriter, r render.Render, params martini.Params) {
-	table_id, err := utils.GetIntParam("table_id", params, res)
+func GetSingle(c *gin.Context) {
+	table_id, err := utils.GetIntParam("table_id", c)
 	if err != nil {
 		return
 	}
 
 	table := models.Table{Id: table_id}
 	if err := table.Get(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(200, table)
+	c.JSON(200, table)
 }
 
-func Add(res http.ResponseWriter, table models.Table) {
+func Add(c *gin.Context) {
+	table := models.Table{}
+
+	c.Bind(&table)
+
 	if err := table.Save(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(201)
-	}
-}
-
-func Save(res http.ResponseWriter, table models.Table, params martini.Params) {
-	table_id, err := strconv.Atoi(params["table_id"])
-	if err != nil {
-		log.Println(err)
-		res.WriteHeader(400)
+		utils.ServeError(c, err)
 		return
 	}
 
+	c.JSON(201, gin.H{})
+}
+
+func Save(c *gin.Context) {
+	table_id, err := utils.GetIntParam("table_id", c)
+	if err != nil {
+		return
+	}
+
+	table := models.Table{}
+
+	c.Bind(&table)
 	table.Id = table_id
 
 	if err := table.Save(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(204)
+		utils.ServeError(c, err)
+		return
 	}
+
+	c.Abort(204)
 }
 
-func Delete(res http.ResponseWriter, params martini.Params) {
-	table_id, err := utils.GetIntParam("table_id", params, res)
+func Delete(c *gin.Context) {
+	table_id, err := utils.GetIntParam("table_id", c)
 	if err != nil {
 		return
 	}
 
 	table := models.Table{Id: table_id}
+
 	if err := table.Remove(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
-	} else {
-		res.WriteHeader(204)
+		utils.ServeError(c, err)
+		return
 	}
+
+	c.Abort(204)
 }
 
-func GetOrderGroup(res http.ResponseWriter, r render.Render, params martini.Params) {
-	table_id, err := utils.GetIntParam("table_id", params, res)
+func GetOrderGroup(c *gin.Context) {
+	table_id, err := utils.GetIntParam("table_id", c)
 	if err != nil {
 		return
 	}
@@ -110,17 +110,15 @@ func GetOrderGroup(res http.ResponseWriter, r render.Render, params martini.Para
 
 	if err == sql.ErrNoRows {
 		if err := orderGroup.Save(); err != nil {
-			log.Println(err)
-			res.WriteHeader(500)
+			utils.ServeError(c, err)
 			return
 		}
 
 		statusCode = 201
 	} else if err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(statusCode, orderGroup)
+	c.JSON(statusCode, orderGroup)
 }

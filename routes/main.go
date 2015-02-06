@@ -2,9 +2,7 @@
 package routes
 
 import (
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/binding"
-	"lab.castawaylabs.com/orderchef/models"
+	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/routes/tables"
 	"lab.castawaylabs.com/orderchef/routes/configTableType"
 	"lab.castawaylabs.com/orderchef/routes/orders"
@@ -12,71 +10,94 @@ import (
 	"lab.castawaylabs.com/orderchef/routes/items"
 )
 
-func Route(r martini.Router) {
-	r.Group("/tables", tableRouter)
-	r.Group("/config", configRouter)
-	r.Group("/order-groups", orderGroupRouter)
-	r.Group("/orders", ordersRouter)
-	r.Group("/categories", categoriesRouter)
-	r.Group("/items", itemsRouter)
+func Route(r *gin.RouterGroup) {
+	tableRouter(r)
+	configRouter(r.Group("/config"))
+	orderGroupRouter(r.Group("/order-groups"))
+	ordersRouter(r.Group("/orders"))
+	categoriesRouter(r)
+	itemsRouter(r)
 }
 
-func tableRouter(r martini.Router) {
-	r.Get("", tables.GetAll)
-	r.Get("/sorted", tables.GetAllSorted)
-	r.Post("", binding.Bind(models.Table{}), tables.Add)
+func tableRouter(r *gin.RouterGroup) {
+	ts := r.Group("/tables")
+	{
+		ts.GET("", tables.GetAll)
+		ts.GET("/sorted", tables.GetAllSorted)
+		ts.POST("", tables.Add)
+	}
 
-	r.Get("/:table_id", tables.GetSingle)
-	r.Put("/:table_id", binding.Bind(models.Table{}), tables.Save)
-	r.Delete("/:table_id", tables.Delete)
+	t := r.Group("/table/:table_id")
+	{
+		t.GET("", tables.GetSingle)
+		t.PUT("", tables.Save)
+		t.DELETE("", tables.Delete)
 
-	// Order Group
-	r.Get("/:table_id/group", tables.GetOrderGroup)
+		// Order Group
+		t.GET("/group", tables.GetOrderGroup)
+	}
 }
 
-func configRouter(r martini.Router) {
-	r.Group("/table-types", func (table_types martini.Router) {
-		table_types.Get("", configTableType.GetAll)
-		table_types.Post("", binding.Bind(models.ConfigTableType{}), configTableType.Add)
+func configRouter(r *gin.RouterGroup) {
+	ts := r.Group("/table-types")
+	{
+		ts.GET("", configTableType.GetAll)
+		ts.POST("", configTableType.Add)
+	}
 
-		table_types.Get("/:table_type_id", configTableType.GetSingle)
-		table_types.Put("/:table_type_id", binding.Bind(models.ConfigTableType{}), configTableType.Save)
-		table_types.Delete("/:table_type_id", configTableType.Delete)
-	})
+	t := r.Group("/table-type/:table_type_id")
+	{
+		t.GET("", configTableType.GetSingle)
+		t.PUT("", configTableType.Save)
+		t.DELETE("", configTableType.Delete)
+	}
 }
 
-func orderGroupRouter(r martini.Router) {
-	r.Group("/:order_group_id", func (groupRouter martini.Router) {
-		groupRouter.Get("", orders.GetGroup)
-		groupRouter.Get("/orders", orders.GetGroupOrders)
-		groupRouter.Post("/orders", binding.Bind(models.Order{}), orders.AddOrderToGroup)
-	})
+func orderGroupRouter(r *gin.RouterGroup) {
+	gs := r.Group("/:order_group_id")
+	{
+		gs.GET("", orders.GetGroup)
+		gs.GET("/orders", orders.GetGroupOrders)
+		gs.POST("/orders", orders.AddOrderToGroup)
+	}
 }
 
-func ordersRouter(r martini.Router) {
-	r.Group("/:order_id", func (orderRouter martini.Router) {
-		orderRouter.Get("", orders.GetOrder)
-		orderRouter.Get("/items", orders.GetOrderItems)
-	})
+func ordersRouter(r *gin.RouterGroup) {
+	os := r.Group("/:order_id")
+	{
+		os.GET("", orders.GetOrder)
+		os.GET("/items", orders.GetOrderItems)
+	}
 }
 
-func categoriesRouter(r martini.Router) {
-	// GET /categories -> Get all categories
-	r.Get("", categories.GetAll)
-	// bidning.Bind takes JSON/Argument POST
-	r.Post("", binding.Bind(models.Category{}), categories.Add)
+func categoriesRouter(r *gin.RouterGroup) {
+	cs := r.Group("/categories")
+	{
+		// GET /categories -> Get all categories
+		cs.GET("", categories.GetAll)
+		cs.POST("", categories.Add)
+	}
 
-	// :category_id is a parameter
-	r.Get("/:category_id", categories.GetSingle)
-	r.Put("/:category_id", binding.Bind(models.Category{}), categories.Save)
-	r.Delete("/:category_id", categories.Delete)
+	c := r.Group("/category/:category_id")
+	{
+		// :category_id is a parameter
+		c.GET("", categories.GetSingle)
+		c.PUT("", categories.Save)
+		c.DELETE("", categories.Delete)
+	}
 }
 
-func itemsRouter(r martini.Router) {
-	r.Get("", items.GetAll)
-	r.Post("", binding.Bind(models.Item{}), items.Add)
+func itemsRouter(r *gin.RouterGroup) {
+	ts := r.Group("/items")
+	{
+		ts.GET("", items.GetAll)
+		ts.POST("", items.Add)
+	}
 
-	r.Get("/:item_id", items.GetSingle)
-	r.Put("/:item_id", binding.Bind(models.Item{}), items.Save)
-	r.Delete("/:item_id", items.Delete)
+	t := r.Group("/item/:item_id")
+	{
+		t.GET("", items.GetSingle)
+		t.PUT("", items.Save)
+		t.DELETE("", items.Delete)
+	}
 }

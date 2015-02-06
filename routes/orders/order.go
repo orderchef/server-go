@@ -2,51 +2,46 @@
 package orders
 
 import (
-	"log"
-	"net/http"
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/render"
+	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
-func getOrderById(res http.ResponseWriter, params martini.Params) (models.Order, error) {
-	order_id, err := utils.GetIntParam("order_id", params, res)
+func getOrderById(c *gin.Context) (models.Order, error) {
+	order_id, err := utils.GetIntParam("order_id", c)
 	if err != nil {
 		return models.Order{}, err
 	}
 
 	order := models.Order{Id: order_id}
 	if err := order.Get(); err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return order, err
 	}
 
 	return order, nil
 }
 
-func GetOrder(res http.ResponseWriter, params martini.Params, r render.Render) {
-	order, err := getOrderById(res, params)
+func GetOrder(c *gin.Context) {
+	order, err := getOrderById(c)
 	if err != nil {
 		return
 	}
 
-	r.JSON(200, order)
+	c.JSON(200, order)
 }
 
-func GetOrderItems(res http.ResponseWriter, params martini.Params, r render.Render) {
-	order, err := getOrderById(res, params)
+func GetOrderItems(c *gin.Context) {
+	order, err := getOrderById(c)
 	if err != nil {
 		return
 	}
 
 	items, err := order.GetItems()
 	if err != nil {
-		log.Println(err)
-		res.WriteHeader(500)
+		utils.ServeError(c, err)
 		return
 	}
 
-	r.JSON(200, items)
+	c.JSON(200, items)
 }
