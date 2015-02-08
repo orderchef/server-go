@@ -5,7 +5,7 @@
 
   tasks:
     - name: update system
-      apt: upgrade=full
+      apt: upgrade=full update_cache=yes
 
     - name: install infrastructure tools
       apt: name={{item}} state=present
