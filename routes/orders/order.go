@@ -56,21 +56,3 @@ func GetOrderItems(c *gin.Context) {
 
 	c.JSON(200, items)
 }
-
-func addOrderItem(c *gin.Context) {
-	order, err := getOrder(c)
-	if err != nil {
-		return
-	}
-
-	orderItem := models.OrderItem{}
-	c.Bind(&orderItem)
-
-	orderItem.OrderId = order.Id
-
-	if err := orderItem.Get(); err != nil {
-		utils.ServeError(c, err)
-		return
-	}
-
-}
