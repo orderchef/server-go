@@ -12,5 +12,5 @@ type ItemModifier struct {
 
 func init() {
 	db := database.Mysql()
-	db.AddTableWithName(Item{}, "item__modifier")
+	db.AddTableWithName(ItemModifier{}, "item__modifier")
 }

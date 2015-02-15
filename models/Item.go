@@ -2,7 +2,6 @@
 package models
 
 import (
-	"fmt"
 	"lab.castawaylabs.com/orderchef/database"
 )
 
@@ -43,8 +42,6 @@ func (item *Item) Get() error {
 
 func (item *Item) Save() error {
 	db := database.Mysql()
-
-	fmt.Println(item)
 
 	var err error
 	if item.Id <= 0 {
