@@ -7,6 +7,23 @@ import (
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
+func Router(r *gin.RouterGroup) {
+	all := r.Group("/categories")
+	{
+		// GET /categories -> Get all categories
+		all.GET("", GetAll)
+		all.POST("", Add)
+	}
+
+	single := r.Group("/category/:category_id")
+	{
+		// :category_id is a parameter
+		single.GET("", GetSingle)
+		single.PUT("", Save)
+		single.DELETE("", Delete)
+	}
+}
+
 // Get all categories
 func GetAll(c *gin.Context) {
 	categories, err := models.GetAllCategories()

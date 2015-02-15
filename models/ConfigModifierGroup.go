@@ -9,7 +9,7 @@ type ConfigModifierGroup struct {
 	Id int `db:"id"`
 
 	Name string `db:"name"`
-	NumberRequired int `db:"number_required"`
+	Required bool `db:"choice_required"`
 }
 
 func init() {

@@ -7,6 +7,21 @@ import (
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
+func Router(r *gin.RouterGroup) {
+	all := r.Group("/items")
+	{
+		all.GET("", GetAll)
+		all.POST("", Add)
+	}
+
+	single := r.Group("/item/:item_id")
+	{
+		single.GET("", GetSingle)
+		single.PUT("", Save)
+		single.DELETE("", Delete)
+	}
+}
+
 func GetAll(c *gin.Context) {
 	items, err := models.GetAllItems()
 	if err != nil {

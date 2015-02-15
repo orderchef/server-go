@@ -1,5 +1,5 @@
 angular.module('orderchef')
-.controller('ConfigCtrl', ['$scope', '$http', 'TestService', function ($scope, $http, TestService) {
+.controller('ConfigTableTypesCtrl', ['$scope', '$http', 'TestService', function ($scope, $http, TestService) {
 	var tests = [];
 	tests.push({
 		name: "Config Table Type",

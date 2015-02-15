@@ -7,6 +7,21 @@ import (
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
+func Router(r *gin.RouterGroup) {
+	all := r.Group("/table-types")
+	{
+		all.GET("", GetAll)
+		all.POST("", Add)
+	}
+
+	single := r.Group("/table-type/:table_type_id")
+	{
+		single.GET("", GetSingle)
+		single.PUT("", Save)
+		single.DELETE("", Delete)
+	}
+}
+
 func GetAll(c *gin.Context) {
 	tableTypes, err := models.GetAllTableTypes()
 	if err != nil {

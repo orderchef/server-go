@@ -5,7 +5,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/routes/config/orderType"
+	"lab.castawaylabs.com/orderchef/routes/config/tableType"
 )
+
+func Router(r *gin.RouterGroup) {
+	r.GET("/settings", GetConfig)
+	r.POST("/settings", UpdateConfig)
+
+	tableType.Router(r)
+	orderType.Router(r)
+}
 
 func UpdateConfig(c *gin.Context) {
 	config := models.Config{}
