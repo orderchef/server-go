@@ -8,3 +8,6 @@ alter table table__items add constraint type_id foreign key (`type_id`) referenc
 
 # config primary key set to name
 alter table config add primary key(name);
+
+# link category_id to item
+alter table item add constraint category_id foreign key (`category_id`) references category(`id`);

@@ -16,7 +16,7 @@ func UpdateConfig(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }
 
 func GetConfig(c *gin.Context) {

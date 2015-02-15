@@ -17,8 +17,8 @@ func Route(r *gin.RouterGroup) {
 
 	tableRouter(r)
 	configRouter(r.Group("/config"))
-	orderGroupRouter(r.Group("/order-groups"))
-	ordersRouter(r.Group("/orders"))
+	orderGroupRouter(r.Group("/order-group"))
+	ordersRouter(r.Group("/order"))
 	categoriesRouter(r)
 	itemsRouter(r)
 }

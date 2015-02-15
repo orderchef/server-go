@@ -67,7 +67,7 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }
 
 // Delete category
@@ -84,5 +84,5 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }

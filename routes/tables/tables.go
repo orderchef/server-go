@@ -77,7 +77,7 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }
 
 func Delete(c *gin.Context) {
@@ -93,7 +93,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }
 
 func GetOrderGroup(c *gin.Context) {

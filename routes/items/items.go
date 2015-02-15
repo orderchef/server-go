@@ -41,7 +41,7 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{})
+	c.JSON(201, item)
 }
 
 func Save(c *gin.Context) {
@@ -58,7 +58,7 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.JSON(201, item)
 }
 
 func Delete(c *gin.Context) {
@@ -74,5 +74,5 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }
