@@ -1,12 +1,6 @@
 
 angular.module('orderchef')
 .controller('ItemsCtrl', ['$scope', '$http', 'TestService', function ($scope, $http, TestService) {
-	function errorCb (cb) {
-		return function () {
-			cb(false, []);
-		}
-	}
-
 	var tests = [];
 	tests.push({
 		name: "Items",

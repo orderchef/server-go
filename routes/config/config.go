@@ -7,6 +7,7 @@ import (
 	"lab.castawaylabs.com/orderchef/utils"
 	"lab.castawaylabs.com/orderchef/routes/config/orderType"
 	"lab.castawaylabs.com/orderchef/routes/config/tableType"
+	"lab.castawaylabs.com/orderchef/routes/config/modifiers"
 )
 
 func Router(r *gin.RouterGroup) {
@@ -15,6 +16,7 @@ func Router(r *gin.RouterGroup) {
 
 	tableType.Router(r)
 	orderType.Router(r)
+	modifiers.Router(r)
 }
 
 func UpdateConfig(c *gin.Context) {
