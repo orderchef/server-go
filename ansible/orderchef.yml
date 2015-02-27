@@ -22,10 +22,42 @@
     - include: tasks/golang.yml
     - include: tasks/nodejs.yml
 
+    - name: create orderchef user
+      user: name=orderchef comment=OrderChef createhome=no home=/orderchef/
+
+    - name: grant permissions to orderchef user
+      shell: chown -R orderchef:orderchef /orderchef/
+
     - name: install server deps
       shell: /orderchef/src/lab.castawaylabs.com/orderchef/deps.sh
       environment:
         GOPATH: /orderchef/
+      sudo_user: orderchef
+
+    - name: install bower
+      npm: name=bower global=yes state=present
+
+    - name: install frontend deps
+      shell: bower install --allow-root
+      args:
+        chdir: /orderchef/src/lab.castawaylabs.com/orderchef/
+      sudo_user: orderchef
 
     - name: install jade
       npm: name=jade global=yes state=present
+
+    - name: create upstart job for jade watch
+      copy:
+        src: files/orderchef-jade.conf
+        dest: /etc/init/orderchef-jade.conf
+
+    - name: start jade watch
+      service: name=orderchef-jade state=started
+
+    - name: create upstart job for server
+      copy:
+        src: files/orderchef-server.conf
+        dest: /etc/init/orderchef-server.conf
+
+    - name: start server
+      service: name=orderchef-server state=started
