@@ -24,3 +24,8 @@ func ServeError(c *gin.Context, err error) {
 
 	return
 }
+
+func ServeNotFound(c *gin.Context) {
+	c.AbortWithStatus(404)
+	return
+}

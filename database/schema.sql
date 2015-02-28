@@ -11,3 +11,8 @@ alter table config add primary key(name);
 
 # link category_id to item
 alter table item add constraint category_id foreign key (`category_id`) references category(`id`);
+
+# add index to deleted
+alter table config__modifier add index (`deleted`);
+alter table config__modifier add index (`group_id`);
+alter table config__modifier_group add index (`deleted`);
