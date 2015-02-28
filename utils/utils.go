@@ -20,6 +20,12 @@ func GetIntParam(name string, c *gin.Context) (int, error) {
 
 func ServeError(c *gin.Context, err error) {
 	log.Println(err)
-	c.JSON(500, gin.H{})
+	c.AbortWithStatus(500)
+
+	return
+}
+
+func ServeNotFound(c *gin.Context) {
+	c.AbortWithStatus(404)
 	return
 }

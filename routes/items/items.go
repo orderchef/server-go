@@ -7,6 +7,21 @@ import (
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
+func Router(r *gin.RouterGroup) {
+	all := r.Group("/items")
+	{
+		all.GET("", GetAll)
+		all.POST("", Add)
+	}
+
+	single := r.Group("/item/:item_id")
+	{
+		single.GET("", GetSingle)
+		single.PUT("", Save)
+		single.DELETE("", Delete)
+	}
+}
+
 func GetAll(c *gin.Context) {
 	items, err := models.GetAllItems()
 	if err != nil {
@@ -41,7 +56,7 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{})
+	c.JSON(201, item)
 }
 
 func Save(c *gin.Context) {
@@ -58,7 +73,7 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.JSON(201, item)
 }
 
 func Delete(c *gin.Context) {
@@ -74,5 +89,5 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }

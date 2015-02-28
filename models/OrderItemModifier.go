@@ -13,6 +13,7 @@ type OrderItemModifier struct {
 
 	ModifierGroup ConfigModifierGroup `db:"-"`
 	ModifierGroupId int `db:"modifier_group_id"`
+	ModifierId int `db:"modifier_id"`
 }
 
 func init() {

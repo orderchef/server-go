@@ -58,7 +58,7 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{})
+	c.JSON(201, table)
 }
 
 func Save(c *gin.Context) {
@@ -77,7 +77,7 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }
 
 func Delete(c *gin.Context) {
@@ -93,7 +93,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }
 
 func GetOrderGroup(c *gin.Context) {
@@ -109,6 +109,7 @@ func GetOrderGroup(c *gin.Context) {
 	statusCode := 200
 
 	if err == sql.ErrNoRows {
+		// no results, create new group
 		if err := orderGroup.Save(); err != nil {
 			utils.ServeError(c, err)
 			return

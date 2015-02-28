@@ -1,11 +1,26 @@
 
-package configTableType
+package tableType
 
 import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
 )
+
+func Router(r *gin.RouterGroup) {
+	all := r.Group("/table-types")
+	{
+		all.GET("", GetAll)
+		all.POST("", Add)
+	}
+
+	single := r.Group("/table-type/:table_type_id")
+	{
+		single.GET("", GetSingle)
+		single.PUT("", Save)
+		single.DELETE("", Delete)
+	}
+}
 
 func GetAll(c *gin.Context) {
 	tableTypes, err := models.GetAllTableTypes()
@@ -39,9 +54,9 @@ func Add(c *gin.Context) {
 
 	if err := tableType.Save(); err != nil {
 		utils.ServeError(c, err)
-	} else {
-		c.JSON(201, gin.H{})
 	}
+
+	c.JSON(201, tableType)
 }
 
 func Save(c *gin.Context) {
@@ -50,14 +65,17 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	tableType := models.ConfigTableType{Id: type_id}
+	tableType := models.ConfigTableType{}
+	c.Bind(&tableType)
+
+	tableType.Id = type_id
 
 	if err := tableType.Save(); err != nil {
 		utils.ServeError(c, err)
 		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }
 
 func Delete(c *gin.Context) {
@@ -70,7 +88,8 @@ func Delete(c *gin.Context) {
 
 	if err := tableType.Remove(); err != nil {
 		utils.ServeError(c, err)
+		return
 	}
 
-	c.Abort(204)
+	c.Writer.WriteHeader(204)
 }

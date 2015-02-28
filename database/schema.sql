@@ -5,3 +5,14 @@
 
 # table (type_id) -> config table type
 alter table table__items add constraint type_id foreign key (`type_id`) references config__table_type(`id`);
+
+# config primary key set to name
+alter table config add primary key(name);
+
+# link category_id to item
+alter table item add constraint category_id foreign key (`category_id`) references category(`id`);
+
+# add index to deleted
+alter table config__modifier add index (`deleted`);
+alter table config__modifier add index (`group_id`);
+alter table config__modifier_group add index (`deleted`);

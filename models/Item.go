@@ -50,11 +50,7 @@ func (item *Item) Save() error {
 		_, err = db.Update(item)
 	}
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (item *Item) Remove() error {

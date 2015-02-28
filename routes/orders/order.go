@@ -7,23 +7,34 @@ import (
 	"lab.castawaylabs.com/orderchef/utils"
 )
 
-func getOrderById(c *gin.Context) (models.Order, error) {
+func getOrderById(c *gin.Context) {
 	order_id, err := utils.GetIntParam("order_id", c)
 	if err != nil {
-		return models.Order{}, err
+		utils.ServeError(c, err)
+		return
 	}
 
 	order := models.Order{Id: order_id}
 	if err := order.Get(); err != nil {
 		utils.ServeError(c, err)
-		return order, err
+		return
 	}
 
-	return order, nil
+	c.Set("order", order)
+	c.Next()
+}
+
+func getOrder(c *gin.Context) (models.Order, error) {
+	order, err := c.Get("order")
+	if err != nil {
+		return models.Order{}, nil
+	}
+
+	return order.(models.Order), nil
 }
 
 func GetOrder(c *gin.Context) {
-	order, err := getOrderById(c)
+	order, err := getOrder(c)
 	if err != nil {
 		return
 	}
@@ -32,7 +43,7 @@ func GetOrder(c *gin.Context) {
 }
 
 func GetOrderItems(c *gin.Context) {
-	order, err := getOrderById(c)
+	order, err := getOrder(c)
 	if err != nil {
 		return
 	}

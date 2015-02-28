@@ -64,3 +64,22 @@ func AddOrderToGroup(c *gin.Context) {
 
 	c.JSON(201, order)
 }
+
+func updateOrderGroup(c *gin.Context) {
+	group, err := getGroupById(c)
+	if err != nil {
+		return
+	}
+
+	temp := models.OrderGroup{}
+	c.Bind(&temp)
+
+	group.TableId = temp.TableId
+
+	if err := group.Save(); err != nil {
+		utils.ServeError(c, err)
+		return
+	}
+
+	c.Writer.WriteHeader(204)
+}
