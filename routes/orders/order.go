@@ -21,6 +21,7 @@ func getOrderById(c *gin.Context) {
 	}
 
 	c.Set("order", order)
+	c.Set("orderId", order_id)
 	c.Next()
 }
 

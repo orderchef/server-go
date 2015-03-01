@@ -2,6 +2,7 @@
 package orders
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
@@ -16,26 +17,13 @@ func addOrderItem(c *gin.Context) {
 	orderItem := models.OrderItem{}
 	c.Bind(&orderItem)
 
-	orderItem.Quantity = 1
 	orderItem.OrderId = order.Id
-
-	found, err := models.FindExistingOrder(orderItem)
-
-	if err != nil {
+	if err := orderItem.Save(); err != nil {
 		utils.ServeError(c, err)
 		return
 	}
 
-	if orderItem != found {
-		found.Quantity++
-	}
-
-	if err := found.Save(); err != nil {
-		utils.ServeError(c, err)
-		return
-	}
-
-	c.AbortWithStatus(201)
+	c.JSON(201, orderItem)
 }
 
 func getOrderItem(c *gin.Context) {
@@ -46,12 +34,17 @@ func getOrderItem(c *gin.Context) {
 	}
 
 	item := models.OrderItem{Id: item_id}
-	if err := item.Get(); err != nil {
+	err = item.Get()
+	if err == sql.ErrNoRows {
+		utils.ServeNotFound(c)
+		return
+	} else if err != nil {
 		utils.ServeError(c, err)
 		return
 	}
 
 	c.Set("orderItem", item)
+	c.Set("orderItemId", item_id)
 	c.Next()
 }
 
@@ -61,7 +54,6 @@ func saveOrderItem(c *gin.Context) {
 	newOrderItem := models.OrderItem{}
 	c.Bind(&newOrderItem)
 
-	orderItem.Quantity = newOrderItem.Quantity
 	orderItem.Notes = newOrderItem.Notes
 
 	if err := orderItem.Save(); err != nil {

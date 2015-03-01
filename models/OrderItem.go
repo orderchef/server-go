@@ -12,7 +12,6 @@ type OrderItem struct {
 	ItemId int `db:"item_id" json:"item_id" binding:"required"`
 	OrderId int `db:"order_id" json:"order_id" binding:"required"`
 
-	Quantity int `db:"quantity" json:"quantity"`
 	Notes string `db:"notes" json:"notes"`
 }
 
@@ -29,6 +28,20 @@ func (orderItem *OrderItem) Get() error {
 	}
 
 	return nil
+}
+
+func (orderItem *OrderItem) GetModifiers() ([]OrderItemModifier, error) {
+	db := database.Mysql()
+
+	var objs []OrderItemModifier
+	_, err := db.Select(&objs, "select * from order__item_modifier where order_item_id=?", orderItem.Id)
+	if err == sql.ErrNoRows {
+		return objs, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return objs, nil
 }
 
 func (orderItem *OrderItem) Save() error {
@@ -52,18 +65,4 @@ func (orderItem *OrderItem) Remove() error {
 	}
 
 	return nil
-}
-
-func FindExistingOrder(existing OrderItem) (OrderItem, error) {
-	db := database.Mysql()
-
-	var found OrderItem
-	err := db.SelectOne(&found, "select * from order__item where order_id=? and item_id=?", existing.OrderId, existing.ItemId)
-	if err == sql.ErrNoRows {
-		return existing, nil
-	} else if err != nil {
-		return OrderItem{}, err
-	}
-
-	return found, nil
 }
