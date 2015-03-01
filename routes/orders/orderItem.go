@@ -35,7 +35,7 @@ func addOrderItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{})
+	c.AbortWithStatus(201)
 }
 
 func getOrderItem(c *gin.Context) {
@@ -56,12 +56,7 @@ func getOrderItem(c *gin.Context) {
 }
 
 func saveOrderItem(c *gin.Context) {
-	orderItem_, err := c.Get("orderItem")
-	if err != nil {
-		return
-	}
-
-	orderItem := orderItem_.(models.OrderItem)
+	orderItem := c.MustGet("orderItem").(models.OrderItem)
 
 	newOrderItem := models.OrderItem{}
 	c.Bind(&newOrderItem)
@@ -78,12 +73,7 @@ func saveOrderItem(c *gin.Context) {
 }
 
 func deleteOrderItem(c *gin.Context) {
-	orderItem_, err := c.Get("orderItem")
-	if err != nil {
-		return
-	}
-
-	orderItem := orderItem_.(models.OrderItem)
+	orderItem := c.MustGet("orderItem").(models.OrderItem)
 	if err := orderItem.Remove(); err != nil {
 		utils.ServeError(c, err)
 		return

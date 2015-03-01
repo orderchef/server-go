@@ -2,6 +2,7 @@
 package models
 
 import (
+	"database/sql"
 	"lab.castawaylabs.com/orderchef/database"
 )
 
@@ -61,4 +62,22 @@ func (item *Item) Remove() error {
 	}
 
 	return nil
+}
+
+func (item *Item) GetModifiers() ([]int, error) {
+	db := database.Mysql()
+
+	var modifiers_items []ItemModifier
+	_, err := db.Select(&modifiers_items, "select * from item__modifier where item_id=?", item.Id)
+
+	modifiers := make([]int, len(modifiers_items))
+	if err != nil && err != sql.ErrNoRows {
+		return modifiers, err
+	}
+
+	for i, m := range modifiers_items {
+		modifiers[i] = m.ModifierGroup
+	}
+
+	return modifiers, nil
 }

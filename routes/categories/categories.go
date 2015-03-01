@@ -65,7 +65,7 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{})
+	c.JSON(201, category)
 }
 
 // Update category
@@ -84,7 +84,7 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	c.Writer.WriteHeader(204)
+	c.JSON(201, category)
 }
 
 // Delete category
