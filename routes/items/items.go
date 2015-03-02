@@ -50,7 +50,11 @@ func getItem(c *gin.Context) {
 	}
 
 	item := models.Item{Id: item_id}
-	if err := item.Get(); err != nil {
+	err = item.Get()
+	if err == sql.ErrNoRows {
+		utils.ServeNotFound(c)
+		return
+	} else if err != nil {
 		utils.ServeError(c, err)
 		return
 	}
@@ -108,7 +112,6 @@ func getItemModifiers(c *gin.Context) {
 		utils.ServeError(c, err)
 		return
 	}
-	fmt.Println(modifiers)
 
 	c.JSON(200, modifiers)
 }

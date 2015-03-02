@@ -2,6 +2,7 @@
 package orders
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
@@ -12,7 +13,7 @@ func getOrderItemModifiers(c *gin.Context) {
 	orderItem := c.MustGet("orderItem").(models.OrderItem)
 
 	modifiers, err := orderItem.GetModifiers()
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		utils.ServeError(c, err)
 		return
 	}

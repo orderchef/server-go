@@ -2,6 +2,7 @@
 package orders
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
@@ -15,7 +16,11 @@ func getOrderById(c *gin.Context) {
 	}
 
 	order := models.Order{Id: order_id}
-	if err := order.Get(); err != nil {
+	err = order.Get()
+	if err == sql.ErrNoRows {
+		utils.ServeNotFound(c)
+		return
+	} else if err != nil {
 		utils.ServeError(c, err)
 		return
 	}

@@ -10,8 +10,7 @@ import (
 func GetIntParam(name string, c *gin.Context) (int, error) {
 	intParam, err := strconv.Atoi(c.Params.ByName(name))
 	if err != nil {
-		log.Println(err)
-		c.JSON(400, gin.H{})
+		c.AbortWithStatus(400)
 		return 0, err
 	}
 
