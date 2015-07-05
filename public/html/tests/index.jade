@@ -1,10 +1,40 @@
-extend layout
+doctype
+html(ng-app="orderchef")
+	head
+		link(rel="stylesheet" href="/public/components/bootstrap/dist/css/bootstrap.min.css")
+		link(rel="stylesheet" href="/public/components/fontawesome/css/font-awesome.css")
+		link(rel="stylesheet" href="/public/css/site.css")
+		title Tests
 
-append head
-	title Tests
+	body(style="margin-top: 15px;")
+		base(href="/public/html/tests/")
+		//- nav.navbar.navbar-default
+			.container-fluid
+				ul.nav.navbar-nav
+					li: a(href="index.html") Tables
+					li: a(href="categories.html") Categories
+					li: a(href="items.html") Items
+					li.dropdown
+						a.dropdown-toggle(href="#" data-toggle="dropdown") Config
+							span.caret
+						ul.dropdown-menu
+							li: a(href="config.table-types.html") Table Types
+							li: a(href="config.order-types.html") Order Types
+							li: a(href="config.modifiers.html") Modifiers
+					li.dropdown
+						a.dropdown-toggle(href="#" data-toggle="dropdown") Orders
+							span.caret
+						ul.dropdown-menu
+							li: a(href="orders-group.html") Orders (Group)
 
-block content
-	+test('TableCtrl')
-
-append afterbody
-	script(src="/public/js/controllers/tableCtrl.js")
+		.container-fluid
+			ui-view
+		
+		script(src="/public/components/jquery/dist/jquery.min.js")
+		script(src="/public/components/bootstrap/dist/js/bootstrap.min.js")
+		script(src="/public/components/angular/angular.js")
+		script(src="/public/components/angular-ui-router/release/angular-ui-router.js")
+		script(src="/public/components/async/lib/async.js")
+		script(src="/public/js/tests/spec.js")
+		script(src="/public/js/tests/app.js")
+		script(src="/public/js/tests/index.js")

@@ -1,0 +1,23 @@
+div(ng-repeat="spec in specs")
+  .panel.panel-default
+    .panel-heading
+      h2.panel-title {{ spec.name }}
+        .pull-right.btn-group(style="margin-top: -3px;")
+          a.btn.btn-success.btn-xs(ng-click="runSpec(spec)"): i.fa.fa-fw.fa-play
+    .panel-body: div(ng-repeat="test in spec.tests track by $index")
+      h4(ng-class="{ 'text-success': test.state == 0, 'text-danger': test.state > 0, 'text-warning': test.state == -1 }" style="margin-top: 0;")
+        | {{ test.name }}
+        small.text-muted.pull-right(style="font-size: 12px; padding-top: 6px;" ng-if="test.state >= 0")
+          span(ng-if="test.responseCode" ng-class="{ 'text-success': test.state == 0, 'text-danger': test.state > 0, 'text-warning': test.state == -1 }") HTTP {{ test.responseCode }}
+          span &nbsp;- {{ test.lag }}
+          span(ng-if="test.dataType == 'array'") &nbsp;_ {{ spec.data[test.id].length }} rows
+      
+      pre(ng-if="test.dataType == 'string'"): code {{ spec.data[test.id] }}
+      table.table(ng-if="test.dataType == 'object'")
+        thead: th(ng-repeat="(k, val) in spec.data[test.id] track by $index") {{ k }}
+        tbody: tr: td(ng-repeat="(k, val) in spec.data[test.id] track by $index") {{ val }}
+      table.table(ng-repeat="v in spec.data[test.id] track by $index" ng-if="test.dataType == 'array'")
+        thead: th(ng-repeat="(k, val) in v track by $index") {{ k }}
+        tbody: tr: td(ng-repeat="(k, val) in v track by $index") {{ val }}
+      
+      hr(ng-if="!$last")

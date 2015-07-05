@@ -1,5 +1,4 @@
-
-var app = angular.module('orderchef', [])
+var app = angular.module('orderchef', ['ui.router']);
 
 function errorCb (cb) {
 	return function () {
@@ -11,10 +10,27 @@ app.config(function ($httpProvider) {
 	$httpProvider.interceptors.push(function ($q) {
 		return {
 			'request': function (config) {
-				config.url = '/api' + config.url;
+				if (config.url.indexOf('/public') === -1) config.url = '/api' + config.url;
+				
 				return config || $q.when(config);
 			}
 		}
+	});
+});
+
+app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
+	$locationProvider.html5Mode({
+		enabled: true,
+		requireBase: true
+	});
+
+	$urlRouterProvider.otherwise('/');
+
+	$stateProvider
+	.state('home', {
+		url: '/',
+		templateUrl: '/public/html/tests/home.html',
+		controller: 'TestsCtrl'
 	});
 });
 
@@ -58,4 +74,4 @@ app.service('TestService', function() {
 	}
 
 	return self;
-})
+});
