@@ -1,10 +1,9 @@
-
 package utils
 
 import (
+	"github.com/gin-gonic/gin"
 	"log"
 	"strconv"
-	"github.com/gin-gonic/gin"
 )
 
 func GetIntParam(name string, c *gin.Context) (int, error) {

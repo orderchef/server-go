@@ -1,11 +1,10 @@
-
 package modifiers
 
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
-	"lab.castawaylabs.com/orderchef/utils"
 	"lab.castawaylabs.com/orderchef/models"
+	"lab.castawaylabs.com/orderchef/utils"
 )
 
 // Get modifier group

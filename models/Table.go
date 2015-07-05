@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -10,15 +9,15 @@ type Table struct {
 
 	TypeId int `db:"type_id" form:"type_id" json:"type_id" binding:"required"`
 
-	Name *string `db:"name" form:"name" json:"name" binding:"required"`
+	Name        *string `db:"name" form:"name" json:"name" binding:"required"`
 	TableNumber *string `db:"table_number" form:"table_number" json:"table_number"`
-	Location *string `db:"location" form:"location" json:"location"`
+	Location    *string `db:"location" form:"location" json:"location"`
 }
 
 type TableTypeExport struct {
-	Type_name string `json:"type_name" db:"name"`
-	Type_id int `json:"type_id" db:"id"`
-	Tables []Table `json:"tables" db:"tables"`
+	Type_name string  `json:"type_name" db:"name"`
+	Type_id   int     `json:"type_id" db:"id"`
+	Tables    []Table `json:"tables" db:"tables"`
 }
 
 func init() {

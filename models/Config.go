@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,15 +5,15 @@ import (
 )
 
 type DBConfig struct {
-	Name string `db:"name"`
+	Name  string `db:"name"`
 	Value string `db:"value"`
 }
 
 type Config struct {
-	IsSetup bool `json:"is_setup"`
+	IsSetup   bool   `json:"is_setup"`
 	VenueName string `json:"venue_name"`
-	ClientId string `json:"client_id"`
-	ApiKey string `json:"-"`
+	ClientId  string `json:"client_id"`
+	ApiKey    string `json:"-"`
 }
 
 func init() {

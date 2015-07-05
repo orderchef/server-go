@@ -1,12 +1,11 @@
-
 package tables
 
 import (
-	"log"
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
+	"log"
 )
 
 func GetAll(c *gin.Context) {

@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -9,10 +8,10 @@ import (
 type Item struct {
 	Id int `db:"id" json:"id"`
 
-	Name string `db:"name" json:"name"`
-	Description string `db:"description" json:"description"`
-	Price float32 `db:"price" json:"price"`
-	CategoryId int `db:"category_id" json:"category_id"`
+	Name        string  `db:"name" json:"name"`
+	Description string  `db:"description" json:"description"`
+	Price       float32 `db:"price" json:"price"`
+	CategoryId  int     `db:"category_id" json:"category_id"`
 }
 
 func init() {

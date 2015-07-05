@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,8 +5,8 @@ import (
 )
 
 type ConfigOrderType struct {
-	Id int `db:"id" json:"id"`
-	Name string `db:"name" json:"name"`
+	Id          int    `db:"id" json:"id"`
+	Name        string `db:"name" json:"name"`
 	Description string `db:"description" json:"description"`
 }
 

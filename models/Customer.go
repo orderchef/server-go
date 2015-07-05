@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,11 +5,11 @@ import (
 )
 
 type Customer struct {
-	Id int `db:"id"`
-	Name string `db:"name"`
-	Email string `db:"email"`
+	Id        int    `db:"id"`
+	Name      string `db:"name"`
+	Email     string `db:"email"`
 	Telephone string `db:"telephone"`
-	Postcode string `db:"postcode"`
+	Postcode  string `db:"postcode"`
 }
 
 func init() {

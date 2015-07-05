@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,8 +5,8 @@ import (
 )
 
 type ConfigReceipts struct {
-	Printer Printer `db:"-"`
-	PrinterId int `db:"printer_id"`
+	Printer   Printer `db:"-"`
+	PrinterId int     `db:"printer_id"`
 
 	Receipt string `db:"receipt"`
 }

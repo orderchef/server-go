@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,8 +5,8 @@ import (
 )
 
 type Order struct {
-	Id int `db:"id" json:"id"`
-	TypeId int `db:"type_id" json:"type_id"`
+	Id      int `db:"id" json:"id"`
+	TypeId  int `db:"type_id" json:"type_id"`
 	GroupId int `db:"group_id" json:"group_id"`
 }
 
@@ -53,4 +52,3 @@ func (order *Order) Save() error {
 
 	return nil
 }
-

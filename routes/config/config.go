@@ -1,13 +1,12 @@
-
 package config
 
 import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/routes/config/modifiers"
 	"lab.castawaylabs.com/orderchef/routes/config/orderType"
 	"lab.castawaylabs.com/orderchef/routes/config/tableType"
-	"lab.castawaylabs.com/orderchef/routes/config/modifiers"
+	"lab.castawaylabs.com/orderchef/utils"
 )
 
 func Router(r *gin.RouterGroup) {

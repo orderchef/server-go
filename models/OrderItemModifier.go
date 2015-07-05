@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -8,12 +7,12 @@ import (
 type OrderItemModifier struct {
 	Id int `db:"id" json:"id"`
 
-	OrderItem OrderItem `db:"-"`
-	OrderItemId int `db:"order_item_id" json:"order_item_id"`
+	OrderItem   OrderItem `db:"-"`
+	OrderItemId int       `db:"order_item_id" json:"order_item_id"`
 
-	ModifierGroup ConfigModifierGroup `db:"-" json:"-"`
-	ModifierGroupId int `db:"modifier_group_id" json:"modifier_group_id"`
-	ModifierId int `db:"modifier_id" json:"modifier_id"`
+	ModifierGroup   ConfigModifierGroup `db:"-" json:"-"`
+	ModifierGroupId int                 `db:"modifier_group_id" json:"modifier_group_id"`
+	ModifierId      int                 `db:"modifier_id" json:"modifier_id"`
 }
 
 func init() {

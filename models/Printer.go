@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,8 +5,8 @@ import (
 )
 
 type Printer struct {
-	Id int `db:"id"`
-	Name string `db:"name"`
+	Id       int    `db:"id"`
+	Name     string `db:"name"`
 	Location string `db:"location"`
 }
 

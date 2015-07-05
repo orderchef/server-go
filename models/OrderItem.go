@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -9,7 +8,7 @@ import (
 type OrderItem struct {
 	Id int `db:"id" json:"id"`
 
-	ItemId int `db:"item_id" json:"item_id" binding:"required"`
+	ItemId  int `db:"item_id" json:"item_id" binding:"required"`
 	OrderId int `db:"order_id" json:"order_id" binding:"required"`
 
 	Notes string `db:"notes" json:"notes"`

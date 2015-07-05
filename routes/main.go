@@ -1,13 +1,12 @@
-
 package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"lab.castawaylabs.com/orderchef/routes/tables"
-	"lab.castawaylabs.com/orderchef/routes/config"
-	"lab.castawaylabs.com/orderchef/routes/orders"
 	"lab.castawaylabs.com/orderchef/routes/categories"
+	"lab.castawaylabs.com/orderchef/routes/config"
 	"lab.castawaylabs.com/orderchef/routes/items"
+	"lab.castawaylabs.com/orderchef/routes/orders"
+	"lab.castawaylabs.com/orderchef/routes/tables"
 )
 
 func Route(r *gin.RouterGroup) {

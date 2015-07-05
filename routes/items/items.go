@@ -1,13 +1,12 @@
-
 package items
 
 import (
-	"fmt"
 	"database/sql"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"lab.castawaylabs.com/orderchef/database"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/utils"
-	"lab.castawaylabs.com/orderchef/database"
 )
 
 func Router(r *gin.RouterGroup) {

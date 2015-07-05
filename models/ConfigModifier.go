@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -10,7 +9,7 @@ type ConfigModifier struct {
 
 	GroupId int `db:"group_id" json:"group_id"`
 
-	Name string `db:"name" json:"name"`
+	Name  string  `db:"name" json:"name"`
 	Price float32 `db:"price" json:"price"`
 
 	Deleted bool `db:"deleted" json:"-"`

@@ -1,10 +1,9 @@
-
 package database
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/coopernurse/gorp"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var mysql_db *gorp.DbMap

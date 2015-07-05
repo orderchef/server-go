@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -7,7 +6,7 @@ import (
 )
 
 type ItemModifier struct {
-	Item int `db:"item_id" json:"item_id"`
+	Item          int `db:"item_id" json:"item_id"`
 	ModifierGroup int `db:"modifier_group_id" json:"modifier_group_id" binding:"required"`
 }
 
