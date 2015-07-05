@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/database"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
 func Router(r *gin.RouterGroup) {
@@ -35,7 +35,7 @@ func Router(r *gin.RouterGroup) {
 func GetAll(c *gin.Context) {
 	items, err := models.GetAllItems()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -43,7 +43,7 @@ func GetAll(c *gin.Context) {
 }
 
 func getItem(c *gin.Context) {
-	item_id, err := utils.GetIntParam("item_id", c)
+	item_id, err := util.GetIntParam("item_id", c)
 	if err != nil {
 		return
 	}
@@ -51,10 +51,10 @@ func getItem(c *gin.Context) {
 	item := models.Item{Id: item_id}
 	err = item.Get()
 	if err == sql.ErrNoRows {
-		utils.ServeNotFound(c)
+		util.ServeNotFound(c)
 		return
 	} else if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -73,7 +73,7 @@ func Add(c *gin.Context) {
 	c.Bind(&item)
 
 	if err := item.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -85,7 +85,7 @@ func Save(c *gin.Context) {
 	c.Bind(&item)
 
 	if err := item.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -96,7 +96,7 @@ func Delete(c *gin.Context) {
 	item := c.MustGet("item").(models.Item)
 
 	if err := item.Remove(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -108,7 +108,7 @@ func getItemModifiers(c *gin.Context) {
 	modifiers, err := item.GetModifiers()
 
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -120,7 +120,7 @@ func addItemModifier(c *gin.Context) {
 	modifiers, err := item.GetModifiers()
 
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -143,7 +143,7 @@ func addItemModifier(c *gin.Context) {
 
 	err = new_modifier.Save()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 	fmt.Println(new_modifier)
@@ -152,7 +152,7 @@ func addItemModifier(c *gin.Context) {
 
 func removeItemModifier(c *gin.Context) {
 	item := c.MustGet("item").(models.Item)
-	group_id, err := utils.GetIntParam("modifier_group_id", c)
+	group_id, err := util.GetIntParam("modifier_group_id", c)
 	if err != nil {
 		return
 	}
@@ -160,7 +160,7 @@ func removeItemModifier(c *gin.Context) {
 	modifier := models.ItemModifier{Item: item.Id, ModifierGroup: group_id}
 	err = modifier.Remove()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -172,7 +172,7 @@ func removeItemModifiers(c *gin.Context) {
 
 	db := database.Mysql()
 	if _, err := db.Exec("delete from item__modifier where item_id=?", item.Id); err != nil && err != sql.ErrNoRows {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 	} else {
 		c.AbortWithStatus(204)
 	}

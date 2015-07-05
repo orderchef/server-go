@@ -3,7 +3,7 @@ package orderType
 import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
 func Router(r *gin.RouterGroup) {
@@ -24,7 +24,7 @@ func Router(r *gin.RouterGroup) {
 func GetAll(c *gin.Context) {
 	orderTypes, err := models.GetAllOrderTypes()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -32,14 +32,14 @@ func GetAll(c *gin.Context) {
 }
 
 func GetSingle(c *gin.Context) {
-	type_id, err := utils.GetIntParam("order_type_id", c)
+	type_id, err := util.GetIntParam("order_type_id", c)
 	if err != nil {
 		return
 	}
 
 	orderType := models.ConfigOrderType{Id: type_id}
 	if err := orderType.Get(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -52,14 +52,14 @@ func Add(c *gin.Context) {
 	c.Bind(&orderType)
 
 	if err := orderType.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 	}
 
 	c.JSON(201, orderType)
 }
 
 func Save(c *gin.Context) {
-	type_id, err := utils.GetIntParam("order_type_id", c)
+	type_id, err := util.GetIntParam("order_type_id", c)
 	if err != nil {
 		return
 	}
@@ -70,7 +70,7 @@ func Save(c *gin.Context) {
 	orderType.Id = type_id
 
 	if err := orderType.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -78,7 +78,7 @@ func Save(c *gin.Context) {
 }
 
 func Delete(c *gin.Context) {
-	type_id, err := utils.GetIntParam("order_type_id", c)
+	type_id, err := util.GetIntParam("order_type_id", c)
 	if err != nil {
 		return
 	}
@@ -86,7 +86,7 @@ func Delete(c *gin.Context) {
 	orderType := models.ConfigOrderType{Id: type_id}
 
 	if err := orderType.Remove(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 

@@ -4,14 +4,14 @@ import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 	"log"
 )
 
 func GetAll(c *gin.Context) {
 	tables, err := models.GetAllTables()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -21,7 +21,7 @@ func GetAll(c *gin.Context) {
 func GetAllSorted(c *gin.Context) {
 	types, err := models.GetAllTablesSorted()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -33,14 +33,14 @@ func GetAllSorted(c *gin.Context) {
 }
 
 func GetSingle(c *gin.Context) {
-	table_id, err := utils.GetIntParam("table_id", c)
+	table_id, err := util.GetIntParam("table_id", c)
 	if err != nil {
 		return
 	}
 
 	table := models.Table{Id: table_id}
 	if err := table.Get(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -53,7 +53,7 @@ func Add(c *gin.Context) {
 	c.Bind(&table)
 
 	if err := table.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -61,7 +61,7 @@ func Add(c *gin.Context) {
 }
 
 func Save(c *gin.Context) {
-	table_id, err := utils.GetIntParam("table_id", c)
+	table_id, err := util.GetIntParam("table_id", c)
 	if err != nil {
 		return
 	}
@@ -72,7 +72,7 @@ func Save(c *gin.Context) {
 	table.Id = table_id
 
 	if err := table.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -80,7 +80,7 @@ func Save(c *gin.Context) {
 }
 
 func Delete(c *gin.Context) {
-	table_id, err := utils.GetIntParam("table_id", c)
+	table_id, err := util.GetIntParam("table_id", c)
 	if err != nil {
 		return
 	}
@@ -88,7 +88,7 @@ func Delete(c *gin.Context) {
 	table := models.Table{Id: table_id}
 
 	if err := table.Remove(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -96,7 +96,7 @@ func Delete(c *gin.Context) {
 }
 
 func GetOrderGroup(c *gin.Context) {
-	table_id, err := utils.GetIntParam("table_id", c)
+	table_id, err := util.GetIntParam("table_id", c)
 	if err != nil {
 		return
 	}
@@ -110,13 +110,13 @@ func GetOrderGroup(c *gin.Context) {
 	if err == sql.ErrNoRows {
 		// no results, create new group
 		if err := orderGroup.Save(); err != nil {
-			utils.ServeError(c, err)
+			util.ServeError(c, err)
 			return
 		}
 
 		statusCode = 201
 	} else if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 

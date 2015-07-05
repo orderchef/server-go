@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
 // GET /modifiers
@@ -13,7 +13,7 @@ func getOrderItemModifiers(c *gin.Context) {
 
 	modifiers, err := orderItem.GetModifiers()
 	if err != nil && err != sql.ErrNoRows {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -30,7 +30,7 @@ func addOrderItemModifier(c *gin.Context) {
 	modifier.OrderItemId = orderItem.Id
 
 	if err := modifier.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -41,14 +41,14 @@ func addOrderItemModifier(c *gin.Context) {
 func removeOrderItemModifier(c *gin.Context) {
 	orderItem := c.MustGet("orderItem").(models.OrderItem)
 
-	modifier_id, err := utils.GetIntParam("order_modifier_id", c)
+	modifier_id, err := util.GetIntParam("order_modifier_id", c)
 	if err != nil {
 		return
 	}
 
 	modifier := models.OrderItemModifier{Id: modifier_id, OrderItemId: orderItem.Id}
 	if err := modifier.Remove(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 

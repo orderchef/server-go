@@ -4,13 +4,13 @@ import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
 // Get modifier group
 // `modifierGroup` (id :modifier_id)
 func getModifierGroupMiddleware(c *gin.Context) {
-	modifier_id, err := utils.GetIntParam("modifier_id", c)
+	modifier_id, err := util.GetIntParam("modifier_id", c)
 	if err != nil {
 		return
 	}
@@ -18,10 +18,10 @@ func getModifierGroupMiddleware(c *gin.Context) {
 	modifier := models.ConfigModifierGroup{Id: modifier_id}
 	err = modifier.Get()
 	if err == sql.ErrNoRows {
-		utils.ServeNotFound(c)
+		util.ServeNotFound(c)
 		return
 	} else if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -35,7 +35,7 @@ func getModifierGroupMiddleware(c *gin.Context) {
 func getModifierGroups(c *gin.Context) {
 	modifierGroups, err := models.GetAllModifierGroups()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -48,7 +48,7 @@ func addModifierGroup(c *gin.Context) {
 	c.Bind(&modifier)
 
 	if err := modifier.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -69,7 +69,7 @@ func saveModifierGroup(c *gin.Context) {
 	modifier.Id = c.MustGet("modifierGroupId").(int)
 
 	if err := modifier.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -81,7 +81,7 @@ func removeModifierGroup(c *gin.Context) {
 	modifier := c.MustGet("modifierGroup").(models.ConfigModifierGroup)
 
 	if err := modifier.Remove(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -94,7 +94,7 @@ func getGroupModifiers(c *gin.Context) {
 
 	modifiers, err := modifier.GetModifiers()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -110,7 +110,7 @@ func addGroupModifier(c *gin.Context) {
 	item.GroupId = modifier.Id
 
 	if err := item.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 

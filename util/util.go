@@ -1,10 +1,22 @@
-package utils
+package util
 
 import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"strconv"
+	"strings"
 )
+
+func AuthFailed(c *gin.Context) {
+	accept := c.Request.Header.Get("Accept")
+	if strings.Contains(accept, "text/html") {
+		// c.Redirect(302, "/account/home")
+	}
+
+	c.AbortWithStatus(401)
+
+	return
+}
 
 func GetIntParam(name string, c *gin.Context) (int, error) {
 	intParam, err := strconv.Atoi(c.Params.ByName(name))

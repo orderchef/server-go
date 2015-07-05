@@ -3,18 +3,18 @@ package orders
 import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
 func getGroupById(c *gin.Context) (models.OrderGroup, error) {
-	group_id, err := utils.GetIntParam("order_group_id", c)
+	group_id, err := util.GetIntParam("order_group_id", c)
 	if err != nil {
 		return models.OrderGroup{}, err
 	}
 
 	group := models.OrderGroup{Id: group_id}
 	if err := group.Get(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return group, err
 	}
 
@@ -38,7 +38,7 @@ func GetGroupOrders(c *gin.Context) {
 
 	orders, err := group.GetOrders()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -57,7 +57,7 @@ func AddOrderToGroup(c *gin.Context) {
 	order.GroupId = group.Id
 
 	if err := order.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -76,7 +76,7 @@ func updateOrderGroup(c *gin.Context) {
 	group.TableId = temp.TableId
 
 	if err := group.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 

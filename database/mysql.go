@@ -2,15 +2,22 @@ package database
 
 import (
 	"database/sql"
-	"github.com/coopernurse/gorp"
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-gorp/gorp"
+	_ "github.com/go-sql-driver/mysql" // imports mysql driver
+	"lab.castawaylabs.com/orderchef/util"
 )
 
-var mysql_db *gorp.DbMap
+var mysqlDb *gorp.DbMap
 
+// Mysql database
 func Mysql() *gorp.DbMap {
-	if mysql_db == nil {
-		db, err := sql.Open("mysql", "root:@/orderchef?parseTime=true")
+	if mysqlDb == nil {
+		url := util.Config.MySQL.Username + ":" + util.Config.MySQL.Password + "@tcp(" + util.Config.MySQL.Hostname + ":3306)/" + util.Config.MySQL.DbName + "?parseTime=true"
+		if url == ":@tcp(:3306)/?parseTime=true" {
+			url = "root@/orderchef?parseTime=true"
+		}
+
+		db, err := sql.Open("mysql", url)
 
 		if err != nil {
 			panic(err)
@@ -21,8 +28,8 @@ func Mysql() *gorp.DbMap {
 			panic(err)
 		}
 
-		mysql_db = &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
+		mysqlDb = &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	}
 
-	return mysql_db
+	return mysqlDb
 }

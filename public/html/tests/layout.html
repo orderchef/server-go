@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html ng-app="orderchef">
+  <head>
+    <base href="/site/tests/">
+    <link rel="stylesheet" href="/assets/components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/site.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li><a href="index.html">Tables</a></li>
+          <li><a href="categories.html">Categories</a></li>
+          <li><a href="items.html">Items</a></li>
+          <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Config<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="config.table-types.html">Table Types</a></li>
+              <li><a href="config.order-types.html">Order Types</a></li>
+              <li><a href="config.modifiers.html">Modifiers</a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Orders<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="orders-group.html">Orders (Group)</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid">
+    </div>
+    <script src="/assets/components/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/assets/components/angular/angular.min.js"></script>
+    <script src="/assets/components/async/lib/async.js"></script>
+    <script src="/assets/js/controllers/testCtrl.js"></script>
+  </body>
+</html>

@@ -15,10 +15,8 @@ func main() {
 
 	r := gin.Default()
 
-	r.Static("/site", "./templates")
-	r.Static("/assets", "./public")
-
-	routes.Route(r.Group("/api"))
+	api := r.Group("/api")
+	routes.Route(api)
 
 	r.Run(":3001")
 }

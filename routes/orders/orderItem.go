@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
 func addOrderItem(c *gin.Context) {
@@ -18,7 +18,7 @@ func addOrderItem(c *gin.Context) {
 
 	orderItem.OrderId = order.Id
 	if err := orderItem.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -26,19 +26,19 @@ func addOrderItem(c *gin.Context) {
 }
 
 func getOrderItem(c *gin.Context) {
-	item_id, err := utils.GetIntParam("item_id", c)
+	item_id, err := util.GetIntParam("item_id", c)
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
 	item := models.OrderItem{Id: item_id}
 	err = item.Get()
 	if err == sql.ErrNoRows {
-		utils.ServeNotFound(c)
+		util.ServeNotFound(c)
 		return
 	} else if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -56,7 +56,7 @@ func saveOrderItem(c *gin.Context) {
 	orderItem.Notes = newOrderItem.Notes
 
 	if err := orderItem.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -66,7 +66,7 @@ func saveOrderItem(c *gin.Context) {
 func deleteOrderItem(c *gin.Context) {
 	orderItem := c.MustGet("orderItem").(models.OrderItem)
 	if err := orderItem.Remove(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
