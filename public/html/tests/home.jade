@@ -1,25 +1,36 @@
+.pull-right
+  button.btn.btn-default(ng-click="runAll()") Run All
+
+.clearfix
+br
+
 div(ng-repeat="spec in specs")
+
   .panel.panel-default
     .panel-heading
       h2.panel-title {{ spec.name }}
         .pull-right.btn-group(style="margin-top: -3px;")
           a.btn.btn-success.btn-xs(ng-click="runSpec(spec)"): i.fa.fa-fw.fa-play
-    .panel-body: div(ng-repeat="test in spec.tests track by $index")
-      h4(ng-class="{ 'text-success': test.state == 0, 'text-danger': test.state > 0, 'text-warning': test.state == -1 }" style="margin-top: 0;")
-        | {{ test.name }} {{test.dataSubType}}
-        small.text-muted.pull-right(style="font-size: 12px; padding-top: 6px;" ng-if="test.state >= 0")
-          span(ng-if="test.responseCode" ng-class="{ 'text-success': test.state == 0, 'text-danger': test.state > 0, 'text-warning': test.state == -1 }") HTTP {{ test.responseCode }}
-          span &nbsp;- {{ test.lag }}
-      
-      p(ng-class="{ 'text-success': test.state == 0, 'text-danger': test.state > 0, 'text-warning': test.state < 0 }" style="font-size: 20px;")
-        i.fa.fa-fw(ng-class="{ 'fa-thumbs-o-up': test.state == 0, 'fa-thumbs-o-down': test.state > 0, 'fa-question': test.state < 0 }")
-        | &nbsp;
-        span(ng-if="test.expect > 0") should be {{ test.expect }}
-        span(ng-if="!(test.expect > 0)") custom test
-        a.btn.btn-default.pull-right.btn-xs(ng-click="test.show = !test.show" ng-if="test.state >= 0")
-          span(ng-if="test.show") Hide data
-          span(ng-if="!test.show") Show data
-      
-      pre(ng-if="test.state >= 0 && test.show"): code {{ spec.dataStringified[test.id] }}
-      
-      hr(ng-if="!$last")
+    .panel-body
+      .progress(ng-if="spec.running"): .progress-bar(style="width: {{spec.testsDone / spec.tests.length * 100}}%;" ng-class="{ 'progress-bar-success': !spec.testsErr, 'progress-bar-danger': spec.testsErr }")
+      div(ng-repeat="test in spec.tests track by $index")
+        h4(style="margin-top: 0; margin-bottom: 0;")
+          div(style="width: 300px; display: inline-block;") {{ test.name }} {{test.dataSubType}}
+          
+          span(ng-class="{ 'text-success': test.state == 0, 'text-danger': test.state > 0, 'text-warning': test.state < 0 }" style="font-size: 16px;")
+            i.fa.fa-fw(ng-class="{ 'fa-thumbs-o-up': test.state == 0, 'fa-thumbs-o-down': test.state > 0, 'fa-question': test.state < 0 }")
+            | &nbsp;
+            span(ng-if="test.expect > 0") should be {{ test.expect }}
+            span(ng-if="!(test.expect > 0)") custom test
+            .pull-right
+              a.btn.btn-default.btn-xs(ng-click="test.show = !test.show" ng-if="test.state >= 0")
+                span(ng-if="test.show") Hide data
+                span(ng-if="!test.show") Show data
+              div(style="display: inline-block; width: 120px; text-align: right;"): small.text-muted(style="font-size: 12px; padding-top: 6px;")
+                span(ng-if="test.responseCode" ng-class="{ 'text-success': test.state == 0, 'text-danger': test.state > 0, 'text-warning': test.state == -1 }") HTTP {{ test.responseCode }}
+                span &nbsp;- {{ test.lag }}
+        
+        .clearfix(ng-if="test.state >= 0 && test.show"): br
+        pre(ng-if="test.state >= 0 && test.show"): code {{ spec.dataStringified[test.id] }}
+        
+        hr(ng-if="!$last" style="margin-top: 10px; margin-bottom: 10px;")
