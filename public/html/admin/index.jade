@@ -1,0 +1,42 @@
+doctype
+html(ng-app="orderchef")
+  head
+    link(rel="stylesheet" href="/public/components/bootstrap/dist/css/bootstrap.min.css")
+    link(rel="stylesheet" href="/public/components/fontawesome/css/font-awesome.css")
+    link(rel="stylesheet" href="/public/css/site.css")
+    title Tests
+
+  body
+    base(href="/public/html/admin/")
+    nav.navbar.navbar-default
+      .container-fluid
+        ul.nav.navbar-nav
+          li: a(href="/public/html/") POS
+          li: a(ui-sref="tables") Tables
+          li.dropdown
+            a.dropdown-toggle(href="" data-toggle="dropdown") Config
+              span.caret
+            ul.dropdown-menu
+              li: a(ui-sref="config.table_types") Table Types
+              li: a(ui-sref="config.order_types") Order Types
+              li: a(ui-sref="config.modifiers") Modifiers
+              li: a(ui-sref="config.items") Items
+
+    .container-fluid
+      ui-view
+
+    script(src="/public/components/jquery/dist/jquery.min.js")
+    script(src="/public/components/bootstrap/dist/js/bootstrap.min.js")
+    script(src="/public/components/angular/angular.js")
+    script(src="/public/components/angular-ui-router/release/angular-ui-router.js")
+    script(src="/public/components/async/lib/async.js")
+    script(src="/public/js/admin/app.js")
+    
+    script(src="/public/js/admin/services/tableTypes.js")
+    script(src="/public/js/admin/services/orderTypes.js")
+    script(src="/public/js/admin/controllers/tables.js")
+    script(src="/public/js/admin/controllers/table.js")
+    script(src="/public/js/admin/controllers/table-type.js")
+    script(src="/public/js/admin/controllers/table-types.js")
+    script(src="/public/js/admin/controllers/order-type.js")
+    script(src="/public/js/admin/controllers/order-types.js")

@@ -1,0 +1,21 @@
+.pull-right: a.btn.btn-default(ui-sref="table.edit({ table_id: 'new' })") Add Table
+.clearfix
+
+table.table
+  thead: tr
+    th ID
+    th Name
+    th Table Number
+    th Location
+    th Type
+    th &nbsp;
+  tbody: tr(ng-repeat="table in tables")
+    td {{ table.id }}
+    td {{ table.name }}
+    td {{ table.table_number }}
+    td {{ table.location }}
+    td {{ table.table_type.name }}
+    td
+      .btn-group.pull-right
+        a.btn.btn-default.btn-xs(ui-sref="table.edit({ table_id: {{ table.id }} })"): i.fa.fa-edit.fa-fw
+        a.btn.btn-danger.btn-xs(ng-click="deleteTable(table)"): i.fa.fa-times.fa-fw
