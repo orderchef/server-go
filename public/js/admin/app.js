@@ -109,4 +109,74 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
       }
     }
 	})
+	.state('config.modifiers', {
+		url: '/modifiers',
+		templateUrl: base + '/config.modifiers.html',
+		controller: 'ModifiersCtrl'
+	})
+	.state('config.modifier', {
+		url: '/modifier/:modifier_id',
+		templateUrl: base + '/config.modifier.html',
+		controller: 'ModifierCtrl',
+		resolve: {
+      Modifier: function ($q, $http, $stateParams) {
+        if ($stateParams.modifier_id == 'new') return {};
+
+        var d = $q.defer();
+
+        $http.get('/config/modifier/' + $stateParams.modifier_id).success(function (data) {
+          d.resolve(data);
+        });
+
+        return d.promise;
+      }
+    }
+	})
+	.state('config.items', {
+		url: '/items',
+		templateUrl: base + '/config.items.html',
+		controller: 'ItemsCtrl'
+	})
+	.state('config.item', {
+		url: '/item/:item_id',
+		templateUrl: base + '/config.item.html',
+		controller: 'ItemCtrl',
+		resolve: {
+			Item: function ($q, $http, $stateParams) {
+				if ($stateParams.item_id == 'new') return {};
+
+				var d = $q.defer();
+
+				$http.get('/item/' + $stateParams.item_id).success(function (data) {
+					d.resolve(data);
+				});
+
+				return d.promise;
+			}
+		}
+	})
+
+	.state('categories', {
+		url: '/categories',
+		templateUrl: base + '/categories.html',
+		controller: 'CategoriesCtrl'
+	})
+	.state('category', {
+		url: '/category/:category_id',
+		templateUrl: base + '/category.html',
+		controller: 'CategoryCtrl',
+		resolve: {
+      Category: function ($q, $http, $stateParams) {
+        if ($stateParams.category_id == 'new') return {};
+
+        var d = $q.defer();
+
+        $http.get('/category/' + $stateParams.category_id).success(function (data) {
+          d.resolve(data);
+        });
+
+        return d.promise;
+      }
+    }
+	})
 });

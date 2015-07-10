@@ -1,0 +1,23 @@
+form.form-horizontal
+  .form-group
+    label.control-label.col-md-3 Name
+    .col-md-9: input.form-control(ng-model="modifier.name" type="text")
+  .form-group
+    .col-md-9.col-md-offset-3: .checkbox: label
+      input(ng-model="modifier.choice_required" type="checkbox")
+      | Required
+  .form-group
+    .col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="save()") Save
+
+table.table
+  tbody
+    tr(ng-repeat="m in modifiers")
+      td: input.form-control(type="text" ng-model="m.name" placeholder="Modifier name")
+      td: input.form-control(type="number" ng-model="m.price" placeholder="Price will affect item price. Can be positive or negative. Negative price reduces item price")
+      td: .btn-group.pull-right
+        button.btn.btn-success.btn-md(ng-click="saveModifier(m)") Save
+        button.btn.btn-danger.btn-md(ng-click="removeModifier(m)" ng-if="m.id") Remove
+    tr
+      td: button.btn.btn-default(ng-click="modifiers.push({})") Add Modifier
+      td
+      td

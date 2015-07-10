@@ -13,6 +13,7 @@ html(ng-app="orderchef")
         ul.nav.navbar-nav
           li: a(href="/public/html/") POS
           li: a(ui-sref="tables") Tables
+          li: a(ui-sref="categories") Categories
           li.dropdown
             a.dropdown-toggle(href="" data-toggle="dropdown") Config
               span.caret
@@ -32,11 +33,16 @@ html(ng-app="orderchef")
     script(src="/public/components/async/lib/async.js")
     script(src="/public/js/admin/app.js")
     
+    script(src="/public/js/admin/services/modifiers.js")
     script(src="/public/js/admin/services/tableTypes.js")
     script(src="/public/js/admin/services/orderTypes.js")
+    script(src="/public/js/admin/services/categories.js")
     script(src="/public/js/admin/controllers/tables.js")
     script(src="/public/js/admin/controllers/table.js")
     script(src="/public/js/admin/controllers/table-type.js")
     script(src="/public/js/admin/controllers/table-types.js")
     script(src="/public/js/admin/controllers/order-type.js")
     script(src="/public/js/admin/controllers/order-types.js")
+    script(src="/public/js/admin/controllers/modifiers.js")
+    script(src="/public/js/admin/controllers/categories.js")
+    script(src="/public/js/admin/controllers/items.js")

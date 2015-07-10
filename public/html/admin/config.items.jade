@@ -1,0 +1,17 @@
+.pull-right: a.btn.btn-default(ui-sref="config.item({ item_id: 'new' })") Add Item
+.clearfix
+
+table.table
+  thead: tr
+    th ID
+    th Name
+    th Price
+    th &nbsp;
+  tbody: tr(ng-repeat="item in items")
+    td {{ item.id }}
+    td {{ item.name }}
+    td {{ item.price }}
+    td
+      .btn-group.pull-right
+        a.btn.btn-default.btn-xs(ui-sref="config.item({ item_id: {{ item.id }} })"): i.fa.fa-edit.fa-fw
+        a.btn.btn-danger.btn-xs(ng-click="remove(item)"): i.fa.fa-times.fa-fw
