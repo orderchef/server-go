@@ -12,7 +12,7 @@ type ItemModifier struct {
 
 func init() {
 	db := database.Mysql()
-	db.AddTableWithName(ItemModifier{}, "item__modifier")
+	db.AddTableWithName(ItemModifier{}, "item__modifier").SetUniqueTogether("item_id", "modifier_group_id")
 }
 
 func (modifier *ItemModifier) Save() error {
@@ -35,7 +35,7 @@ func (modifier *ItemModifier) Save() error {
 func (modifier *ItemModifier) Remove() error {
 	db := database.Mysql()
 
-	if _, err := db.Delete(modifier); err != nil {
+	if _, err := db.Exec("delete from item__modifier where item_id=? and modifier_group_id=?", modifier.Item, modifier.ModifierGroup); err != nil && err != sql.ErrNoRows {
 		return err
 	}
 
