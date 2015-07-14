@@ -53,14 +53,20 @@ func GetAllTablesSorted() ([]TableTypeExport, error) {
 	return types, nil
 }
 
-func (t *Table) Get() error {
+func GetOpenTables() ([]Table, error) {
+	var tables []Table
 	db := database.Mysql()
 
-	if err := db.SelectOne(&t, "select * from table__items where id=?", t.Id); err != nil {
-		return err
-	}
+	_, err := db.Select(&tables, "select ti.* from table__items as ti join order__group as og on og.table_id = ti.id where og.cleared=0")
 
-	return nil
+	return tables, err
+}
+
+func (t *Table) Get() error {
+	db := database.Mysql()
+	err := db.SelectOne(&t, "select * from table__items where id=?", t.Id)
+
+	return err
 }
 
 func (t *Table) Save() error {
@@ -73,19 +79,13 @@ func (t *Table) Save() error {
 		_, err = db.Update(t)
 	}
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (t *Table) Remove() error {
 	db := database.Mysql()
 
-	if _, err := db.Delete(t); err != nil {
-		return err
-	}
+	_, err := db.Delete(t)
 
-	return nil
+	return err
 }

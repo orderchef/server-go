@@ -1,10 +1,12 @@
 doctype
 html(ng-app="orderchef")
   head
+    meta(http-equiv="Content-Type" content="text/html; charset=utf-8;")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="/public/components/bootstrap/dist/css/bootstrap.min.css")
     link(rel="stylesheet" href="/public/components/fontawesome/css/font-awesome.css")
     link(rel="stylesheet" href="/public/css/site.css")
-    title Tests
+    title Admin
 
   body
     base(href="/public/html/admin/")
@@ -32,7 +34,7 @@ html(ng-app="orderchef")
     script(src="/public/components/angular-ui-router/release/angular-ui-router.js")
     script(src="/public/components/async/lib/async.js")
     script(src="/public/js/admin/app.js")
-    
+
     script(src="/public/js/admin/services/modifiers.js")
     script(src="/public/js/admin/services/tableTypes.js")
     script(src="/public/js/admin/services/orderTypes.js")

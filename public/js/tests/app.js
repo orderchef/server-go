@@ -1,17 +1,11 @@
 var app = angular.module('orderchef', ['ui.router']);
 
-function errorCb (cb) {
-	return function () {
-		cb(false, []);
-	}
-}
-
 app.config(function ($httpProvider) {
 	$httpProvider.interceptors.push(function ($q) {
 		return {
 			'request': function (config) {
 				if (config.url.indexOf('/public') === -1) config.url = '/api' + config.url;
-				
+
 				return config || $q.when(config);
 			}
 		}

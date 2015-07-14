@@ -1,0 +1,21 @@
+h1(style="margin-top: 0;") Open Tables
+
+table.table
+  thead: tr
+    th Name
+    th Table Number
+    th Location
+    th Type
+  tbody: tr(ng-repeat="table in openTables")
+    td: a(ui-sref="orders({ table_id: table.id })") {{ table.name }}
+    td {{ table.table_number }}
+    td {{ table.location }}
+    td {{ table.table_type.name }}
+
+.panel.panel-default(ng-repeat="section in tableTypes" ng-if="section.tables.length > 0")
+  .panel-heading
+    h4.panel-title {{ section.name }}
+  table.table
+    tr(ng-repeat="table in section.tables")
+      td {{ table.name }}
+        button.btn.btn-default.pull-right.btn-xs(ng-click="openTable(table)") Open Table

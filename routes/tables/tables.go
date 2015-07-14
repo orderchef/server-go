@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/util"
-	"log"
 )
 
 func GetAll(c *gin.Context) {
@@ -25,11 +24,21 @@ func GetAllSorted(c *gin.Context) {
 		return
 	}
 
-	for _, ttype := range types {
-		log.Println(len(ttype.Tables))
-	}
+	// for _, ttype := range types {
+	// 	log.Println(len(ttype.Tables))
+	// }
 
 	c.JSON(200, types)
+}
+
+func GetOpenTables(c *gin.Context) {
+	tables, err := models.GetOpenTables()
+	if err != nil {
+		util.ServeError(c, err)
+		return
+	}
+
+	c.JSON(200, tables)
 }
 
 func GetSingle(c *gin.Context) {

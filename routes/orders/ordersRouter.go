@@ -11,15 +11,15 @@ func Router(r *gin.RouterGroup) {
 		all.POST("/orders", AddOrderToGroup)
 	}
 
-	single := r.Group("/order/:order_id")
+	order := r.Group("/order/:order_id")
 	{
-		single.Use(getOrderById)
+		order.Use(getOrderById)
 
-		single.GET("", GetOrder)
-		single.GET("/items", GetOrderItems)
-		single.POST("/items", addOrderItem)
+		order.GET("", GetOrder)
+		order.GET("/items", GetOrderItems)
+		order.POST("/items", addOrderItem)
 
-		item := single.Group("/item/:item_id")
+		item := order.Group("/item/:item_id")
 		{
 			item.Use(getOrderItem)
 

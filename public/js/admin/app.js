@@ -1,11 +1,5 @@
 var app = angular.module('orderchef', ['ui.router']);
 
-function errorCb (cb) {
-	return function () {
-		cb(false, []);
-	}
-}
-
 app.config(function ($httpProvider) {
 	$httpProvider.interceptors.push(function ($q) {
 		return {
