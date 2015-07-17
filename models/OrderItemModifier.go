@@ -7,7 +7,7 @@ import (
 type OrderItemModifier struct {
 	Id int `db:"id" json:"id"`
 
-	OrderItem   OrderItem `db:"-"`
+	OrderItem   OrderItem `db:"-" json:"-"`
 	OrderItemId int       `db:"order_item_id" json:"order_item_id"`
 
 	ModifierGroup   ConfigModifierGroup `db:"-" json:"-"`

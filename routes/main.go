@@ -12,6 +12,8 @@ import (
 func Route(r *gin.RouterGroup) {
 	r.GET("/ping", pong)
 
+	r.GET("/datapack", getDatapack)
+
 	tables.Router(r)
 	config.Router(r.Group("/config"))
 	orders.Router(r)

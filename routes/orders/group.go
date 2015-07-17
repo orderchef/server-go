@@ -6,6 +6,15 @@ import (
 	"lab.castawaylabs.com/orderchef/util"
 )
 
+type order struct {
+	models.Order
+	Items []orderItem `json:"items"`
+}
+type orderItem struct {
+	models.OrderItem
+	Modifiers []models.OrderItemModifier `json:"modifiers"`
+}
+
 func getGroupById(c *gin.Context) (models.OrderGroup, error) {
 	group_id, err := util.GetIntParam("order_group_id", c)
 	if err != nil {
@@ -42,7 +51,21 @@ func GetGroupOrders(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, orders)
+	ordersWithItems := make([]order, len(orders))
+	for i, orderObject := range orders {
+		items, _ := orderObject.GetItems()
+		ordersWithItems[i] = order{orderObject, make([]orderItem, len(items))}
+
+		for itemIndex, orderItemObject := range items {
+			modifiers, _ := orderItemObject.GetModifiers()
+			ordersWithItems[i].Items[itemIndex] = orderItem{
+				OrderItem: orderItemObject,
+				Modifiers: modifiers,
+			}
+		}
+	}
+
+	c.JSON(200, ordersWithItems)
 }
 
 func AddOrderToGroup(c *gin.Context) {
