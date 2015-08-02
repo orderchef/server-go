@@ -59,6 +59,11 @@ func (orderItem *OrderItem) Save() error {
 func (orderItem *OrderItem) Remove() error {
 	db := database.Mysql()
 
+	_, err := db.Exec("delete from order__item_modifier where order_item_id=?", orderItem.Id)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
 	if _, err := db.Delete(orderItem); err != nil {
 		return err
 	}

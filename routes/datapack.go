@@ -19,6 +19,7 @@ type table struct {
 type item struct {
 	models.Item
 	Category models.Category `json:"category"`
+	Modifiers []int `json:"modifiers"`
 }
 
 func getDatapack(c *gin.Context) {
@@ -83,6 +84,8 @@ func getItems() []*item {
 		}
 
 		items[i].Category.Get()
+		modifierIds, _ := items[i].Item.GetModifiers()
+		items[i].Modifiers = modifierIds
 	}
 
 	return items

@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/util"
+	"errors"
 )
 
 func addOrderItem(c *gin.Context) {
@@ -17,6 +18,12 @@ func addOrderItem(c *gin.Context) {
 	c.Bind(&orderItem)
 
 	orderItem.OrderId = order.Id
+
+	if orderItem.ItemId <= 0 {
+		util.ServeError(c, errors.New("Invalid Item ID"))
+		return
+	}
+
 	if err := orderItem.Save(); err != nil {
 		util.ServeError(c, err)
 		return
