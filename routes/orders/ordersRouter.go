@@ -18,6 +18,8 @@ func Router(r *gin.RouterGroup) {
 		order.GET("", GetOrder)
 		order.GET("/items", GetOrderItems)
 		order.POST("/items", addOrderItem)
+		order.DELETE("", DeleteOrder)
+		order.POST("/print", PrintOrder)
 
 		item := order.Group("/item/:item_id")
 		{

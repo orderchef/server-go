@@ -29,29 +29,14 @@ func getOrderById(c *gin.Context) {
 	c.Next()
 }
 
-func getOrder(c *gin.Context) (models.Order, error) {
-	order, exists := c.Get("order")
-	if exists == false {
-		return models.Order{}, nil
-	}
-
-	return order.(models.Order), nil
-}
-
 func GetOrder(c *gin.Context) {
-	order, err := getOrder(c)
-	if err != nil {
-		return
-	}
+	order := c.MustGet("order")
 
 	c.JSON(200, order)
 }
 
 func GetOrderItems(c *gin.Context) {
-	order, err := getOrder(c)
-	if err != nil {
-		return
-	}
+	order := c.MustGet("order").(models.Order)
 
 	items, err := order.GetItems()
 	if err != nil {
@@ -60,4 +45,20 @@ func GetOrderItems(c *gin.Context) {
 	}
 
 	c.JSON(200, items)
+}
+
+func DeleteOrder(c *gin.Context) {
+	order := c.MustGet("order").(models.Order)
+
+	if err := order.Remove(); err != nil {
+		util.ServeError(c, err)
+		return
+	}
+
+	c.Writer.WriteHeader(204)
+}
+
+func PrintOrder(c *gin.Context) {
+
+	c.Writer.WriteHeader(204)
 }

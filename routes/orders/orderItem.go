@@ -9,10 +9,7 @@ import (
 )
 
 func addOrderItem(c *gin.Context) {
-	order, err := getOrder(c)
-	if err != nil {
-		return
-	}
+	order := c.MustGet("order").(models.Order)
 
 	orderItem := models.OrderItem{}
 	c.Bind(&orderItem)
