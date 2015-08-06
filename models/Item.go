@@ -1,17 +1,17 @@
-
 package models
 
 import (
+	"database/sql"
 	"lab.castawaylabs.com/orderchef/database"
 )
 
 type Item struct {
 	Id int `db:"id" json:"id"`
 
-	Name string `db:"name" json:"name"`
-	Description string `db:"description" json:"description"`
-	Price float32 `db:"price" json:"price"`
-	CategoryId int `db:"category_id" json:"category_id"`
+	Name        string  `db:"name" json:"name"`
+	Description string  `db:"description" json:"description"`
+	Price       float32 `db:"price" json:"price"`
+	CategoryId  int     `db:"category_id" json:"category_id"`
 }
 
 func init() {
@@ -61,4 +61,22 @@ func (item *Item) Remove() error {
 	}
 
 	return nil
+}
+
+func (item *Item) GetModifiers() ([]int, error) {
+	db := database.Mysql()
+
+	var modifiers_items []ItemModifier
+	_, err := db.Select(&modifiers_items, "select * from item__modifier where item_id=?", item.Id)
+
+	modifiers := make([]int, len(modifiers_items))
+	if err != nil && err != sql.ErrNoRows {
+		return modifiers, err
+	}
+
+	for i, m := range modifiers_items {
+		modifiers[i] = m.ModifierGroup
+	}
+
+	return modifiers, nil
 }

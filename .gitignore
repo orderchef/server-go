@@ -1,6 +1,4 @@
 gin-bin
 public/components
-templates/*.html
-templates/**/*.html
-
-.vagrant
+public/html/*.html
+public/html/*/*.html

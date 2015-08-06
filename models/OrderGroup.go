@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -10,8 +9,8 @@ type OrderGroup struct {
 
 	TableId int `db:"table_id" json:"table_id"`
 
-	Cleared bool `db:"cleared" json:"cleared"`
-	ClearedWhen int `db:"cleared_when" json:"cleared_when"`
+	Cleared     bool `db:"cleared" json:"cleared"`
+	ClearedWhen int  `db:"cleared_when" json:"cleared_when"`
 }
 
 func init() {

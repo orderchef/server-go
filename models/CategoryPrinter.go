@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,10 +5,10 @@ import (
 )
 
 type CategoryPrinter struct {
-	PrinterId int `db:"printer_id" json:"printer_id"`
+	PrinterId  int `db:"printer_id" json:"printer_id"`
 	CategoryId int `db:"category_id" json:"category_id"`
 
-	Printer Printer `db:"-"`
+	Printer  Printer  `db:"-"`
 	Category Category `db:"-"`
 }
 

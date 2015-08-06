@@ -1,0 +1,15 @@
+.pull-right: a.btn.btn-default(ui-sref="category({ category_id: 'new' })") Add Category
+.clearfix
+
+table.table
+  thead: tr
+    th ID
+    th Name
+    th &nbsp;
+  tbody: tr(ng-repeat="category in categories")
+    td {{ category.id }}
+    td {{ category.name }}
+    td
+      .btn-group.pull-right
+        a.btn.btn-default.btn-xs(ui-sref="category({ category_id: {{ category.id }} })"): i.fa.fa-edit.fa-fw
+        a.btn.btn-danger.btn-xs(ng-click="remove(category)"): i.fa.fa-times.fa-fw

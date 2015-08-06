@@ -1,0 +1,15 @@
+.pull-right: a.btn.btn-default(ui-sref="config.table_type({ table_type_id: 'new' })") Add Table Type
+.clearfix
+
+table.table
+  thead: tr
+    th ID
+    th Name
+    th &nbsp;
+  tbody: tr(ng-repeat="type in tableTypes")
+    td {{ type.id }}
+    td {{ type.name }}
+    td
+      .btn-group.pull-right
+        a.btn.btn-default.btn-xs(ui-sref="config.table_type({ table_type_id: {{ type.id }} })"): i.fa.fa-edit.fa-fw
+        a.btn.btn-danger.btn-xs(ng-click="remove(type)"): i.fa.fa-times.fa-fw

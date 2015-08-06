@@ -1,21 +1,29 @@
-
 package orders
 
 import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
+type order struct {
+	models.Order
+	Items []orderItem `json:"items"`
+}
+type orderItem struct {
+	models.OrderItem
+	Modifiers []models.OrderItemModifier `json:"modifiers"`
+}
+
 func getGroupById(c *gin.Context) (models.OrderGroup, error) {
-	group_id, err := utils.GetIntParam("order_group_id", c)
+	group_id, err := util.GetIntParam("order_group_id", c)
 	if err != nil {
 		return models.OrderGroup{}, err
 	}
 
 	group := models.OrderGroup{Id: group_id}
 	if err := group.Get(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return group, err
 	}
 
@@ -39,11 +47,25 @@ func GetGroupOrders(c *gin.Context) {
 
 	orders, err := group.GetOrders()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
-	c.JSON(200, orders)
+	ordersWithItems := make([]order, len(orders))
+	for i, orderObject := range orders {
+		items, _ := orderObject.GetItems()
+		ordersWithItems[i] = order{orderObject, make([]orderItem, len(items))}
+
+		for itemIndex, orderItemObject := range items {
+			modifiers, _ := orderItemObject.GetModifiers()
+			ordersWithItems[i].Items[itemIndex] = orderItem{
+				OrderItem: orderItemObject,
+				Modifiers: modifiers,
+			}
+		}
+	}
+
+	c.JSON(200, ordersWithItems)
 }
 
 func AddOrderToGroup(c *gin.Context) {
@@ -58,7 +80,7 @@ func AddOrderToGroup(c *gin.Context) {
 	order.GroupId = group.Id
 
 	if err := order.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -77,7 +99,7 @@ func updateOrderGroup(c *gin.Context) {
 	group.TableId = temp.TableId
 
 	if err := group.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 

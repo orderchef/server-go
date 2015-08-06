@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -10,15 +9,15 @@ type Table struct {
 
 	TypeId int `db:"type_id" form:"type_id" json:"type_id" binding:"required"`
 
-	Name *string `db:"name" form:"name" json:"name" binding:"required"`
+	Name        *string `db:"name" form:"name" json:"name" binding:"required"`
 	TableNumber *string `db:"table_number" form:"table_number" json:"table_number"`
-	Location *string `db:"location" form:"location" json:"location"`
+	Location    *string `db:"location" form:"location" json:"location"`
 }
 
 type TableTypeExport struct {
-	Type_name string `json:"type_name" db:"name"`
-	Type_id int `json:"type_id" db:"id"`
-	Tables []Table `json:"tables" db:"tables"`
+	Type_name string  `json:"type_name" db:"name"`
+	Type_id   int     `json:"type_id" db:"id"`
+	Tables    []Table `json:"tables" db:"tables"`
 }
 
 func init() {
@@ -54,14 +53,20 @@ func GetAllTablesSorted() ([]TableTypeExport, error) {
 	return types, nil
 }
 
-func (t *Table) Get() error {
+func GetOpenTables() ([]Table, error) {
+	var tables []Table
 	db := database.Mysql()
 
-	if err := db.SelectOne(&t, "select * from table__items where id=?", t.Id); err != nil {
-		return err
-	}
+	_, err := db.Select(&tables, "select ti.* from table__items as ti join order__group as og on og.table_id = ti.id where og.cleared=0")
 
-	return nil
+	return tables, err
+}
+
+func (t *Table) Get() error {
+	db := database.Mysql()
+	err := db.SelectOne(&t, "select * from table__items where id=?", t.Id)
+
+	return err
 }
 
 func (t *Table) Save() error {
@@ -74,19 +79,13 @@ func (t *Table) Save() error {
 		_, err = db.Update(t)
 	}
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (t *Table) Remove() error {
 	db := database.Mysql()
 
-	if _, err := db.Delete(t); err != nil {
-		return err
-	}
+	_, err := db.Delete(t)
 
-	return nil
+	return err
 }

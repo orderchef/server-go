@@ -1,0 +1,15 @@
+form.form-horizontal
+  .form-group
+    label.control-label.col-md-3 Name
+    .col-md-9: input.form-control(ng-model="table.name" type="text")
+  .form-group
+    label.control-label.col-md-3 Table Number
+    .col-md-9: input.form-control(ng-model="table.table_number" type="text")
+  .form-group
+    label.control-label.col-md-3 Location
+    .col-md-9: input.form-control(ng-model="table.location" type="text")
+  .form-group
+    label.control-label.col-md-3 Type
+    .col-md-9: select.form-control(ng-model="table.type_id" ng-options="type.id as type.name for type in tableTypes")
+  .form-group
+    .col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="saveTable()") Save

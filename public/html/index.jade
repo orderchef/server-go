@@ -1,0 +1,36 @@
+doctype
+html(ng-app="orderchef")
+  head
+    meta(http-equiv="Content-Type" content="text/html; charset=utf-8;")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet" href="/public/components/bootstrap/dist/css/bootstrap.min.css")
+    link(rel="stylesheet" href="/public/components/fontawesome/css/font-awesome.css")
+    link(rel="stylesheet" href="/public/css/site.css")
+    title POS
+
+  body
+    base(href="/public/html/")
+    nav.navbar.navbar-default
+      .container-fluid
+        ul.nav.navbar-nav
+          li: a(href="/public/html/admin/") Admin
+          li: a(ui-sref="tables") Tables
+
+    .container-fluid
+      ui-view
+
+    script(src="/public/components/jquery/dist/jquery.min.js")
+    script(src="/public/components/bootstrap/dist/js/bootstrap.min.js")
+    script(src="/public/components/angular/angular.js")
+    script(src="/public/components/angular-ui-router/release/angular-ui-router.js")
+    script(src="/public/components/async/lib/async.js")
+    script(src="/public/js/app.js")
+
+    script(src="/public/js/admin/services/modifiers.js")
+    script(src="/public/js/admin/services/tableTypes.js")
+    script(src="/public/js/admin/services/orderTypes.js")
+    script(src="/public/js/admin/services/categories.js")
+    script(src="/public/js/services/items.js")
+
+    script(src="/public/js/controllers/tables.js")
+    script(src="/public/js/controllers/orders.js")

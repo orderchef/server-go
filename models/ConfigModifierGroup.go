@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -8,9 +7,9 @@ import (
 type ConfigModifierGroup struct {
 	Id int `db:"id" json:"id"`
 
-	Name string `db:"name" json:"name"`
-	Required bool `db:"choice_required" json:"choice_required"`
-	Deleted bool `db:"deleted" json:"-"`
+	Name     string `db:"name" json:"name"`
+	Required bool   `db:"choice_required" json:"choice_required"`
+	Deleted  bool   `db:"deleted" json:"-"`
 }
 
 func init() {

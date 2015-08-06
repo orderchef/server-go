@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,8 +5,8 @@ import (
 )
 
 type Order struct {
-	Id int `db:"id" json:"id"`
-	TypeId int `db:"type_id" json:"type_id"`
+	Id      int `db:"id" json:"id"`
+	TypeId  int `db:"type_id" json:"type_id"`
 	GroupId int `db:"group_id" json:"group_id"`
 }
 
@@ -54,3 +53,23 @@ func (order *Order) Save() error {
 	return nil
 }
 
+func (order *Order) Remove() error {
+	db := database.Mysql()
+
+	items, err := order.GetItems()
+	if err != nil {
+		return err
+	}
+
+	for _, item := range items {
+		if err := item.Remove(); err != nil {
+			return err
+		}
+	}
+
+	if _, err := db.Delete(order); err != nil {
+		return err
+	}
+
+	return nil
+}

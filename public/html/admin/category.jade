@@ -1,0 +1,9 @@
+form.form-horizontal
+  .form-group
+    label.control-label.col-md-3 Name
+    .col-md-9: input.form-control(ng-model="category.name" type="text")
+  .form-group
+    label.control-label.col-md-3 Description
+    .col-md-9: textarea.form-control(ng-model="category.description")
+  .form-group
+    .col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="save()") Save

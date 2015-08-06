@@ -1,0 +1,12 @@
+h1(style="margin-top: 0;") {{ table.name }}
+	button.btn.btn-success.btn-xs.pull-right(ng-click="addOrder()") Add Order
+
+div(ng-repeat="orderItem in orderItems" style="margin-bottom: 10px;")
+	.panel.panel-default(style="margin-bottom:0;")
+		.panel-heading: h4.panel-title {{ orderItem.type.name }}
+			button.btn.btn-success.btn-xs.pull-right(ng-click="addItem(orderItem)") Add Item
+		table.table
+			tr(ng-repeat="item in orderItem.items")
+				td {{ item.item.name }}
+					p(ng-repeat="modifier in item.modifiers") {{ modifier.modifier_group.name }} -- {{ modifier.modifier.name }}
+	p.text-muted(style="padding-top: 5px; padding-left: 10px;") {{ orderItem.type.description }}

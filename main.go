@@ -1,10 +1,9 @@
-
 package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"lab.castawaylabs.com/orderchef/routes"
 	"lab.castawaylabs.com/orderchef/database"
+	"lab.castawaylabs.com/orderchef/routes"
 )
 
 func main() {
@@ -16,10 +15,8 @@ func main() {
 
 	r := gin.Default()
 
-	r.Static("/site", "./templates")
-	r.Static("/assets", "./public")
-
-	routes.Route(r.Group("/api"))
+	api := r.Group("/api")
+	routes.Route(api)
 
 	r.Run(":3001")
 }

@@ -1,0 +1,15 @@
+.pull-right: a.btn.btn-default(ui-sref="config.order_type({ order_type_id: 'new' })") Add Modifier Group
+.clearfix
+
+table.table
+  thead: tr
+    th ID
+    th Name
+    th &nbsp;
+  tbody: tr(ng-repeat="modifier in modifiers")
+    td {{ modifier.id }}
+    td {{ modifier.name }}
+    td
+      .btn-group.pull-right
+        a.btn.btn-default.btn-xs(ui-sref="config.modifier({ modifier_id: {{ modifier.id }} })"): i.fa.fa-edit.fa-fw
+        a.btn.btn-danger.btn-xs(ng-click="remove(modifier)"): i.fa.fa-times.fa-fw

@@ -1,4 +1,3 @@
-
 package modifiers
 
 import "github.com/gin-gonic/gin"

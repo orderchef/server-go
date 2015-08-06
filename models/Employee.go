@@ -1,4 +1,3 @@
-
 package models
 
 import (
@@ -6,11 +5,11 @@ import (
 )
 
 type Employee struct {
-	Id int `db:"id"`
-	Name string `db:"name"`
-	Manager bool `db:"manager"`
-	Passkey string `db:"passkey"`
-	LastLogin int `db:"last_login"`
+	Id        int    `db:"id"`
+	Name      string `db:"name"`
+	Manager   bool   `db:"manager"`
+	Passkey   string `db:"passkey"`
+	LastLogin int    `db:"last_login"`
 }
 
 func init() {

@@ -1,76 +1,66 @@
-
 package orders
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
+	"errors"
 )
 
 func addOrderItem(c *gin.Context) {
-	order, err := getOrder(c)
-	if err != nil {
-		return
-	}
+	order := c.MustGet("order").(models.Order)
 
 	orderItem := models.OrderItem{}
 	c.Bind(&orderItem)
 
-	orderItem.Quantity = 1
 	orderItem.OrderId = order.Id
 
-	found, err := models.FindExistingOrder(orderItem)
-
-	if err != nil {
-		utils.ServeError(c, err)
+	if orderItem.ItemId <= 0 {
+		util.ServeError(c, errors.New("Invalid Item ID"))
 		return
 	}
 
-	if orderItem != found {
-		found.Quantity++
-	}
-
-	if err := found.Save(); err != nil {
-		utils.ServeError(c, err)
+	if err := orderItem.Save(); err != nil {
+		util.ServeError(c, err)
 		return
 	}
 
-	c.JSON(201, gin.H{})
+	c.JSON(201, orderItem)
 }
 
 func getOrderItem(c *gin.Context) {
-	item_id, err := utils.GetIntParam("item_id", c)
+	item_id, err := util.GetIntParam("item_id", c)
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
 	item := models.OrderItem{Id: item_id}
-	if err := item.Get(); err != nil {
-		utils.ServeError(c, err)
+	err = item.Get()
+	if err == sql.ErrNoRows {
+		util.ServeNotFound(c)
+		return
+	} else if err != nil {
+		util.ServeError(c, err)
 		return
 	}
 
 	c.Set("orderItem", item)
+	c.Set("orderItemId", item_id)
 	c.Next()
 }
 
 func saveOrderItem(c *gin.Context) {
-	orderItem_, err := c.Get("orderItem")
-	if err != nil {
-		return
-	}
-
-	orderItem := orderItem_.(models.OrderItem)
+	orderItem := c.MustGet("orderItem").(models.OrderItem)
 
 	newOrderItem := models.OrderItem{}
 	c.Bind(&newOrderItem)
 
-	orderItem.Quantity = newOrderItem.Quantity
 	orderItem.Notes = newOrderItem.Notes
 
 	if err := orderItem.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -78,14 +68,9 @@ func saveOrderItem(c *gin.Context) {
 }
 
 func deleteOrderItem(c *gin.Context) {
-	orderItem_, err := c.Get("orderItem")
-	if err != nil {
-		return
-	}
-
-	orderItem := orderItem_.(models.OrderItem)
+	orderItem := c.MustGet("orderItem").(models.OrderItem)
 	if err := orderItem.Remove(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 

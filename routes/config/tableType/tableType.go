@@ -1,10 +1,9 @@
-
 package tableType
 
 import (
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/utils"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
 func Router(r *gin.RouterGroup) {
@@ -25,7 +24,7 @@ func Router(r *gin.RouterGroup) {
 func GetAll(c *gin.Context) {
 	tableTypes, err := models.GetAllTableTypes()
 	if err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -33,14 +32,14 @@ func GetAll(c *gin.Context) {
 }
 
 func GetSingle(c *gin.Context) {
-	type_id, err := utils.GetIntParam("table_type_id", c)
+	type_id, err := util.GetIntParam("table_type_id", c)
 	if err != nil {
 		return
 	}
 
 	tableType := models.ConfigTableType{Id: type_id}
 	if err := tableType.Get(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -53,14 +52,14 @@ func Add(c *gin.Context) {
 	c.Bind(&tableType)
 
 	if err := tableType.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 	}
 
 	c.JSON(201, tableType)
 }
 
 func Save(c *gin.Context) {
-	type_id, err := utils.GetIntParam("table_type_id", c)
+	type_id, err := util.GetIntParam("table_type_id", c)
 	if err != nil {
 		return
 	}
@@ -71,7 +70,7 @@ func Save(c *gin.Context) {
 	tableType.Id = type_id
 
 	if err := tableType.Save(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
@@ -79,7 +78,7 @@ func Save(c *gin.Context) {
 }
 
 func Delete(c *gin.Context) {
-	type_id, err := utils.GetIntParam("table_type_id", c)
+	type_id, err := util.GetIntParam("table_type_id", c)
 	if err != nil {
 		return
 	}
@@ -87,7 +86,7 @@ func Delete(c *gin.Context) {
 	tableType := models.ConfigTableType{Id: type_id}
 
 	if err := tableType.Remove(); err != nil {
-		utils.ServeError(c, err)
+		util.ServeError(c, err)
 		return
 	}
 
