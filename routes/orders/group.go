@@ -97,6 +97,7 @@ func updateOrderGroup(c *gin.Context) {
 	c.Bind(&temp)
 
 	group.TableId = temp.TableId
+	group.Covers = temp.Covers
 
 	if err := group.Save(); err != nil {
 		util.ServeError(c, err)

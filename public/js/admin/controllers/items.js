@@ -44,6 +44,14 @@ app.controller('ItemCtrl', function ($scope, $http, $state, Item, Categories, Mo
         }
       }
     });
+
+    $http.get('/config/printers').success(function (printers) {
+      $scope.availablePrinters = printers;
+
+      $http.get('/item/' + $scope.item.id + '/printers').success(function (printers) {
+        $scope.printers = printers;
+      });
+    });
   }
   if ($scope.item.id) $scope.refresh();
 
@@ -69,7 +77,7 @@ app.controller('ItemCtrl', function ($scope, $http, $state, Item, Categories, Mo
     $http.delete('/item/' + $scope.item.id + '/modifier/' + mod.id);
 
     $scope.allModifiers.push(mod);
-    
+
     for (var i = 0; i < $scope.modifiers.length; i++) {
       if ($scope.modifiers[i].id == mod.id) {
         $scope.modifiers.splice(i, 1);
@@ -91,5 +99,17 @@ app.controller('ItemCtrl', function ($scope, $http, $state, Item, Categories, Mo
     }).error(function () {
       alert('Cannot save item');
     });
+  }
+
+  $scope.addPrinter = function (printer) {
+    if (!printer) return;
+    $http.post('/item/' + $scope.item.id + '/printers/' + printer)
+    .success(function () {
+      $scope.refresh();
+    })
+  }
+
+  $scope.removePrinter = function (printer) {
+    $http.delete('/item/' + $scope.item.id + '/printers/' + printer).then($scope.refresh)
   }
 });

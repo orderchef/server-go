@@ -11,6 +11,8 @@ type OrderGroup struct {
 
 	Cleared     bool `db:"cleared" json:"cleared"`
 	ClearedWhen int  `db:"cleared_when" json:"cleared_when"`
+
+	Covers int `db:"covers" json:"covers"`
 }
 
 func init() {

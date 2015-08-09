@@ -11,7 +11,7 @@ form.form-horizontal
   .form-group
     label.control-label.col-md-3 Category
     .col-md-9: select.form-control(ng-model="item.category_id" ng-options="cat.id as cat.name for cat in categories")
-  
+
   .form-group(ng-repeat="modifier in modifiers")
     label.control-label.col-md-3(ng-if="$first") Modifiers
     .col-md-9(ng-class="{ 'col-md-offset-3': !$first }"): .checkbox
@@ -24,3 +24,19 @@ form.form-horizontal
 
   .form-group
     .col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="save()") Save
+
+hr
+
+form.form-horizontal
+  .form-group
+    label.control-label.col-md-3 Printers
+    .col-md-9
+      p.help-text Override printers which this item will be printed to (if none specified, uses printers from Category)
+      table.table.table-striped
+        tbody: tr(ng-repeat="printer in printers"): td
+          | {{ printer.printer_id }}
+          button.pull-right.btn.btn-danger.btn-xs(ng-click="removePrinter(printer.printer_id)"): i.fa.fa-times.fa-fw
+      br
+      select.form-control(ng-model="add_printer" ng-options="printer for printer in availablePrinters")
+        option(value="") -- Select Printer --
+      button.btn.btn-success(ng-click="addPrinter(add_printer)") Add Printer

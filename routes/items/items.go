@@ -10,26 +10,26 @@ import (
 )
 
 func Router(r *gin.RouterGroup) {
-	all := r.Group("/items")
-	{
-		all.GET("", GetAll)
-		all.POST("", Add)
-	}
+	r.GET("/items", GetAll)
+	r.POST("/items", Add)
 
-	single := r.Group("/item/:item_id")
-	{
-		single.Use(getItem)
+	func (api *gin.RouterGroup) {
+		api.Use(getItem)
 
-		single.GET("", GetSingle)
-		single.PUT("", Save)
-		single.DELETE("", Delete)
+		api.GET("", GetSingle)
+		api.PUT("", Save)
+		api.DELETE("", Delete)
 
 		// Modifiers
-		single.GET("/modifiers", getItemModifiers)
-		single.POST("/modifiers", addItemModifier)
-		single.DELETE("/modifiers", removeItemModifiers)
-		single.DELETE("/modifier/:modifier_group_id", removeItemModifier)
-	}
+		api.GET("/modifiers", getItemModifiers)
+		api.POST("/modifiers", addItemModifier)
+		api.DELETE("/modifiers", removeItemModifiers)
+		api.DELETE("/modifier/:modifier_group_id", removeItemModifier)
+
+		api.GET("/printers", getPrinters)
+		api.POST("/printers/:printer_id", addPrinter)
+		api.DELETE("/printers/:printer_id", deletePrinter)
+	}(r.Group("/item/:item_id"))
 }
 
 func GetAll(c *gin.Context) {

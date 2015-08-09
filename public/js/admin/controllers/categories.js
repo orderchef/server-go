@@ -22,6 +22,30 @@ app.controller('CategoriesCtrl', function ($scope, $http, Categories) {
 app.controller('CategoryCtrl', function ($scope, $http, $state, Category) {
   $scope.category = Category;
 
+  $scope.refresh = function () {
+    $http.get('/config/printers').success(function (printers) {
+      $scope.availablePrinters = printers;
+
+      $http.get('/category/' + Category.id + '/printers').success(function (printers) {
+        $scope.printers = printers;
+      });
+    });
+  }
+
+  if (Category.id) $scope.refresh();
+
+  $scope.addPrinter = function (printer) {
+    if (!printer) return;
+    $http.post('/category/' + $scope.category.id + '/printers/' + printer)
+    .success(function () {
+      $scope.refresh();
+    })
+  }
+
+  $scope.removePrinter = function (printer) {
+    $http.delete('/category/' + $scope.category.id + '/printers/' + printer).then($scope.refresh)
+  }
+
   $scope.save = function () {
     var p;
     if ($scope.category.id) {
@@ -34,6 +58,6 @@ app.controller('CategoryCtrl', function ($scope, $http, $state, Category) {
       $state.go('categories');
     }).error(function () {
       alert('Cannot save category');
-    })
+    });
   }
 });

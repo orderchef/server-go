@@ -5,7 +5,7 @@ import (
 )
 
 type ConfigReceipts struct {
-	Printer   Printer `db:"-"`
+	// Printer   Printer `db:"-"`
 	PrinterId int     `db:"printer_id"`
 
 	Receipt string `db:"receipt"`

@@ -2,12 +2,14 @@ package models
 
 import (
 	"lab.castawaylabs.com/orderchef/database"
+	"time"
 )
 
 type Order struct {
 	Id      int `db:"id" json:"id"`
 	TypeId  int `db:"type_id" json:"type_id"`
 	GroupId int `db:"group_id" json:"group_id"`
+	PrintedAt *time.Time `db:"printed_at" json:"printed_at"`
 }
 
 func init() {

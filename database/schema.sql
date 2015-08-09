@@ -16,3 +16,11 @@ alter table item add constraint category_id foreign key (`category_id`) referenc
 alter table config__modifier add index (`deleted`);
 alter table config__modifier add index (`group_id`);
 alter table config__modifier_group add index (`deleted`);
+
+create table category_printer (
+	`printer_id` varchar(255) default null,
+	`category_id` int(11) default null,
+	`item_id` int(11) default null,
+	unique unique_index (`printer_id`, `category_id`),
+	unique unique_index_2 (`printer_id`, `item_id`)
+) engine=InnoDB default charset=utf8;

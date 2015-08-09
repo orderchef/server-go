@@ -1,9 +1,24 @@
 form.form-horizontal
-  .form-group
-    label.control-label.col-md-3 Name
-    .col-md-9: input.form-control(ng-model="category.name" type="text")
-  .form-group
-    label.control-label.col-md-3 Description
-    .col-md-9: textarea.form-control(ng-model="category.description")
-  .form-group
-    .col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="save()") Save
+	.form-group
+		label.control-label.col-md-3 Name
+		.col-md-9: input.form-control(ng-model="category.name" type="text")
+	.form-group
+		label.control-label.col-md-3 Description
+		.col-md-9: textarea.form-control(ng-model="category.description")
+	.form-group
+		.col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="save()") Save
+
+hr
+
+form.form-horizontal
+	.form-group
+		label.control-label.col-md-3 Printers
+		.col-md-9
+			table.table.table-striped
+				tbody: tr(ng-repeat="printer in printers"): td
+					| {{ printer.printer_id }}
+					button.pull-right.btn.btn-danger.btn-xs(ng-click="removePrinter(printer.printer_id)"): i.fa.fa-times.fa-fw
+			br
+			select.form-control(ng-model="add_printer" ng-options="printer for printer in availablePrinters")
+				option(value="") -- Select Printer --
+			button.btn.btn-success(ng-click="addPrinter(add_printer)") Add Printer

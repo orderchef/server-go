@@ -7,20 +7,22 @@ import (
 )
 
 func Router(r *gin.RouterGroup) {
-	all := r.Group("/categories")
-	{
+	func (api *gin.RouterGroup) {
 		// GET /categories -> Get all categories
-		all.GET("", GetAll)
-		all.POST("", Add)
-	}
+		api.GET("", GetAll)
+		api.POST("", Add)
+	}(r.Group("/categories"))
 
-	single := r.Group("/category/:category_id")
-	{
+	func (api *gin.RouterGroup) {
 		// :category_id is a parameter
-		single.GET("", GetSingle)
-		single.PUT("", Save)
-		single.DELETE("", Delete)
-	}
+		api.GET("", GetSingle)
+		api.PUT("", Save)
+		api.DELETE("", Delete)
+
+		api.GET("/printers", getPrinters)
+		api.POST("/printers/:printer_id", addPrinter)
+		api.DELETE("/printers/:printer_id", deletePrinter)
+	}(r.Group("/category/:category_id"))
 }
 
 // Get all categories

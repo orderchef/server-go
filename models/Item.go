@@ -56,6 +56,11 @@ func (item *Item) Save() error {
 func (item *Item) Remove() error {
 	db := database.Mysql()
 
+	// remove all printer links
+	if _, err := db.Exec("delete from category_printer where item_id=?", item.Id); err != nil {
+		return err
+	}
+
 	if _, err := db.Delete(item); err != nil {
 		return err
 	}

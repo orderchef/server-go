@@ -1,17 +1,21 @@
 package config
 
 import (
+	"log"
 	"github.com/gin-gonic/gin"
+	"github.com/garyburd/redigo/redis"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/routes/config/modifiers"
 	"lab.castawaylabs.com/orderchef/routes/config/orderType"
 	"lab.castawaylabs.com/orderchef/routes/config/tableType"
 	"lab.castawaylabs.com/orderchef/util"
+	"lab.castawaylabs.com/orderchef/database"
 )
 
 func Router(r *gin.RouterGroup) {
 	r.GET("/settings", GetConfig)
 	r.POST("/settings", UpdateConfig)
+	r.GET("/printers", getPrinters)
 
 	tableType.Router(r)
 	orderType.Router(r)
@@ -38,4 +42,19 @@ func GetConfig(c *gin.Context) {
 	}
 
 	c.JSON(200, config)
+}
+
+func getPrinters(c *gin.Context) {
+	redis_c := database.Redis.Get()
+	defer redis_c.Close()
+
+	members, err := redis.Strings(redis_c.Do("SMEMBERS", "oc_printers"))
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatus(500)
+
+		return
+	}
+
+	c.JSON(200, members)
 }
