@@ -13,6 +13,15 @@ import (
 	"github.com/garyburd/redigo/redis"
 )
 
+var kitchenReceipt = template.Must(template.New("kitchenReceipt").Parse(`[[justify 1]][[font 1]]Kitchen receipt[[lf]][[justify 2]]
+justified just right
+
+[[justify 0]]{{range .items}} {{.itemObject.Name}}
+{{range .modifiers}} - {{.group.Name}} ({{.modifier.Name}})
+{{end}}
+{{end}}
+[[cut]]`))
+
 func getOrderById(c *gin.Context) {
 	order_id, err := util.GetIntParam("order_id", c)
 	if err != nil {
@@ -63,13 +72,6 @@ func DeleteOrder(c *gin.Context) {
 
 	c.Writer.WriteHeader(204)
 }
-
-var kitchenReceipt = template.Must(template.New("kitchenReceipt").Parse(`Kitchen receipt
-
-{{range .items}} {{.itemObject.Name}}
-{{range .modifiers}} - {{.group.Name}} ({{.modifier.Name}})
-{{end}}
-{{end}}`))
 
 func PrintOrder(c *gin.Context) {
 	db := database.Mysql()

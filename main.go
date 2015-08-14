@@ -14,7 +14,6 @@ func main() {
 	// defer db.Close()
 
 	r := gin.Default()
-
 	api := r.Group("/api")
 	routes.Route(api)
 
