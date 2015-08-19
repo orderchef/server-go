@@ -9,6 +9,7 @@ func Router(r *gin.RouterGroup) {
 		api.PUT("", updateOrderGroup)
 		api.GET("/orders", GetGroupOrders)
 		api.POST("/orders", AddOrderToGroup)
+		api.POST("/clear", clearGroup)
 
 		func (api *gin.RouterGroup) {
 			// /order-group/:order_group_id/bills

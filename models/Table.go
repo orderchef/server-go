@@ -1,6 +1,7 @@
 package models
 
 import (
+	"time"
 	"lab.castawaylabs.com/orderchef/database"
 )
 
@@ -18,6 +19,15 @@ type TableTypeExport struct {
 	Type_name string  `json:"type_name" db:"name"`
 	Type_id   int     `json:"type_id" db:"id"`
 	Tables    []Table `json:"tables" db:"tables"`
+}
+
+type OpenTable struct {
+	Table
+
+	Covers *int `json:"covers" db:"covers"`
+	PrintedOrders int `json:"printedOrders" db:"printedOrders"`
+	Orders int `json:"orders" db:"orders"`
+	LastPrintedOrder *time.Time `json:"last_printed_order" db:"last_printed_order"`
 }
 
 func init() {
@@ -53,11 +63,11 @@ func GetAllTablesSorted() ([]TableTypeExport, error) {
 	return types, nil
 }
 
-func GetOpenTables() ([]Table, error) {
-	var tables []Table
+func GetOpenTables() ([]OpenTable, error) {
+	var tables []OpenTable
 	db := database.Mysql()
 
-	_, err := db.Select(&tables, "select ti.* from table__items as ti join order__group as og on og.table_id = ti.id where og.cleared=0")
+	_, err := db.Select(&tables, "select ti.*, og.covers, count(ogm.printed_at) as printedOrders, count(ogm.id) as orders, max(ogm.printed_at) as last_printed_order from table__items as ti join order__group as og on og.table_id = ti.id left join order__group_member as ogm on ogm.group_id=og.id where og.cleared=0 group by ti.id")
 
 	return tables, err
 }

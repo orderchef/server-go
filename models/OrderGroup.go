@@ -1,6 +1,7 @@
 package models
 
 import (
+	"time"
 	"lab.castawaylabs.com/orderchef/database"
 )
 
@@ -10,7 +11,7 @@ type OrderGroup struct {
 	TableId int `db:"table_id" json:"table_id"`
 
 	Cleared     bool `db:"cleared" json:"cleared"`
-	ClearedWhen int  `db:"cleared_when" json:"cleared_when"`
+	ClearedWhen *time.Time  `db:"cleared_when" json:"cleared_when"`
 
 	Covers int `db:"covers" json:"covers"`
 }

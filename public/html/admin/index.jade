@@ -5,6 +5,7 @@ html(ng-app="orderchef")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="/public/components/bootstrap/dist/css/bootstrap.min.css")
     link(rel="stylesheet" href="/public/components/fontawesome/css/font-awesome.css")
+    link(rel="stylesheet" href="/public/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css")
     link(rel="stylesheet" href="/public/css/site.css")
     title Admin
 
@@ -13,7 +14,15 @@ html(ng-app="orderchef")
     nav.navbar.navbar-default
       .container-fluid
         ul.nav.navbar-nav
-          li: a(href="/public/html/") POS
+          li.dropdown
+            a.dropdown-toggle(href="" data-toggle="dropdown") Reports
+              span.caret
+            ul.dropdown-menu
+              li: a(ui-sref="reports.past_orders") Past Orders
+              li: a(ui-sref="reports.sales") Sales Report
+              li: a(ui-sref="reports.popular_dishes") Popular Dishes
+              li: a(ui-sref="reports.cash") Cash Report
+        ul.nav.navbar-nav.pull-right
           li: a(ui-sref="tables") Tables
           li: a(ui-sref="categories") Categories
           li.dropdown
@@ -32,13 +41,16 @@ html(ng-app="orderchef")
     script(src="/public/components/bootstrap/dist/js/bootstrap.min.js")
     script(src="/public/components/angular/angular.js")
     script(src="/public/components/angular-ui-router/release/angular-ui-router.js")
+    script(src="/public/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js")
     script(src="/public/components/async/lib/async.js")
+    script(src="/public/components/momentjs/min/moment.min.js")
     script(src="/public/js/admin/app.js")
 
     script(src="/public/js/admin/services/modifiers.js")
     script(src="/public/js/admin/services/tableTypes.js")
     script(src="/public/js/admin/services/orderTypes.js")
     script(src="/public/js/admin/services/categories.js")
+    script(src="/public/js/admin/services/reportDates.js")
     script(src="/public/js/admin/controllers/tables.js")
     script(src="/public/js/admin/controllers/table.js")
     script(src="/public/js/admin/controllers/table-type.js")
@@ -48,3 +60,4 @@ html(ng-app="orderchef")
     script(src="/public/js/admin/controllers/modifiers.js")
     script(src="/public/js/admin/controllers/categories.js")
     script(src="/public/js/admin/controllers/items.js")
+    script(src="/public/js/admin/controllers/reports.js")

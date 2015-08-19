@@ -173,4 +173,30 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
       }
     }
 	})
+
+	.state('reports', {
+		url: '/reports',
+		abstract: true,
+		template: '<ui-view></ui-view>'
+	})
+	.state('reports.past_orders', {
+		url: '/past_orders',
+		templateUrl: base + '/reports.past_orders.html',
+		controller: 'PastOrdersReportCtrl'
+	})
+	.state('reports.sales', {
+		url: '/sales',
+		templateUrl: base + '/reports.sales.html',
+		controller: 'SalesReportCtrl'
+	})
+	.state('reports.popular_dishes', {
+		url: '/popular_dishes',
+		templateUrl: base + '/reports.popular_dishes.html',
+		controller: 'PopularDishesReportCtrl'
+	})
+	.state('reports.cash', {
+		url: '/cash',
+		templateUrl: base + '/reports.cash.html',
+		controller: 'CashReportCtrl'
+	})
 });

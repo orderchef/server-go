@@ -33,17 +33,23 @@ func getBillTotals(c *gin.Context) {
 		return
 	}
 
-	// paid := map[string]float32{}
-	unpaid, err := db.SelectFloat("select sum(total) from order__bill where paid=? and group_id=?", false, group.Id)
+	total, err := db.SelectFloat("select sum(item.price) from order__group_member join order__item as oi on oi.order_id=order__group_member.id join item on item.id=oi.item_id where group_id=?", group.Id)
 	if err != nil {
-		unpaid = 0
+		total = 0
 	}
+
+	totalModifiers, err := db.SelectFloat("select sum(cm.price) from order__group_member join order__item as oi on oi.order_id=order__group_member.id join order__item_modifier as oim on oim.order_item_id=oi.id join config__modifier as cm on cm.id=oim.modifier_id where order__group_member.group_id=?", group.Id)
+	if err != nil {
+		totalModifiers = 0
+	}
+
+	total += totalModifiers
 
 	methods, _ := db.Select(models.OrderBill{}, "select sum(total) as paid_amount, payment_method_id from order__bill where paid=? and group_id=? group by payment_method_id", true, group.Id)
 
 	c.JSON(200, map[string]interface{}{
 		"paid": methods,
-		"unpaid": unpaid,
+		"total": total,
 	})
 }
 
@@ -150,7 +156,7 @@ func updateBill(c *gin.Context) {
 		}
 	}
 
-	if bill.Paid = false; roundPrice(float64(bill.PaidAmount)) == roundPrice(float64(bill.Total)) {
+	if bill.Paid = false; roundPrice(float64(bill.PaidAmount)) == roundPrice(float64(bill.Total)) && bill.Total > 0 {
 		bill.Paid = true
 	}
 

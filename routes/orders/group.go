@@ -1,6 +1,7 @@
 package orders
 
 import (
+	"time"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/util"
@@ -105,4 +106,21 @@ func updateOrderGroup(c *gin.Context) {
 	}
 
 	c.Writer.WriteHeader(204)
+}
+
+func clearGroup(c *gin.Context) {
+	group, err := getGroupById(c)
+	if err != nil {
+		return
+	}
+
+	group.Cleared = true
+	now := time.Now()
+	group.ClearedWhen = &now
+
+	if err := group.Save(); err != nil {
+		panic(err)
+	}
+
+	c.AbortWithStatus(204)
 }
