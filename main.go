@@ -11,7 +11,6 @@ func main() {
 	if err := db.CreateTablesIfNotExists(); err != nil {
 		panic(err)
 	}
-	// defer db.Close()
 
 	r := gin.Default()
 	api := r.Group("/api")

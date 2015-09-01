@@ -6,23 +6,24 @@ import (
 	"time"
 	"text/template"
 	"bytes"
-	"encoding/json"
+	// "encoding/json"
 	"github.com/garyburd/redigo/redis"
 	"database/sql"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/util"
 	"lab.castawaylabs.com/orderchef/database"
 	"github.com/gin-gonic/gin"
+	"github.com/matejkramny/gopos"
 )
 
-var billReceipt = template.Must(template.New("billReceipt").Parse(`[[justify 1]][[font 1]]Bill receipt[[lf]][[justify 2]]
-justified just right
-
-[[justify 0]]{{range .items}} {{.ItemName}}[[justify 2]]£{{.ItemPrice}}
-[[justify 0]]{{end}}
-
-[[emphesize 1]]Total:[[justify 2]]£{{.total}}
-
+var billReceipt = template.Must(template.New("billReceipt").Parse(`[[justify 1]]Taberu
+[[justify 0]]
+{{range .items}} - {{.ItemName}}   GBP {{.ItemPrice}}
+{{end}}
+[[justify 2]]Total: GBP {{.total}}
+[[lf]]
+[[lf]]
+[[lf]]
 [[cut]]`))
 
 // get totals - items that are paid, amounts
@@ -201,16 +202,18 @@ func printBill(c *gin.Context) {
 	buf := new(bytes.Buffer)
 	billReceipt.Execute(buf, printData)
 
-	data := map[string]interface{}{
-		"print": buf.String(),
-	}
+	buffer := gopos.RenderTemplate(buf.String())
 
-	jsonBlob, err := json.Marshal(data)
-	if err != nil {
-		panic(err)
-	}
+	// data := map[string]interface{}{
+	// 	"print": buffer.String(),
+	// }
 
-	num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print.receipt", string(jsonBlob)))
+	// jsonBlob, err := json.Marshal(data)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print.receipt", buffer.String()))
 	if err != nil {
 		panic(err)
 	}

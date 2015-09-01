@@ -27,6 +27,17 @@ func (order *Order) Get() error {
 	return nil
 }
 
+func (order *Order) GetTableName() string {
+	db := database.Mysql()
+
+	var table Table
+	if err := db.SelectOne(&table, "select name from table__items join order__group on order__group.table_id=table__items.id join order__group_member on order__group_member.group_id=order__group.id where order__group_member.id=?", order.Id); err != nil {
+		return ""
+	}
+
+	return *table.Name
+}
+
 func (order *Order) GetItems() ([]OrderItem, error) {
 	db := database.Mysql()
 

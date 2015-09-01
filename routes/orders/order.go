@@ -4,22 +4,27 @@ import (
 	"time"
 	"bytes"
 	"text/template"
-	"encoding/json"
+	// "encoding/json"
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/util"
 	"lab.castawaylabs.com/orderchef/database"
 	"github.com/garyburd/redigo/redis"
+	"github.com/matejkramny/gopos"
 )
 
-var kitchenReceipt = template.Must(template.New("kitchenReceipt").Parse(`[[justify 1]][[font 1]]Kitchen receipt[[lf]][[justify 2]]
-justified just right
-
-[[justify 0]]{{range .items}} {{.itemObject.Name}}
+var kitchenReceipt = template.Must(template.New("kitchenReceipt").Parse(`[[lf]][[justify 0]]
+{{.time}}
+Table: {{.table_name}}. Order #{{.order.Id}}
+{{range .items}}---------------
+{{.itemObject.Name}}
 {{range .modifiers}} - {{.group.Name}} ({{.modifier.Name}})
+{{end}}---------------
 {{end}}
-{{end}}
+[[lf]]
+[[lf]]
+[[lf]]
 [[cut]]`))
 
 func getOrderById(c *gin.Context) {
@@ -81,6 +86,9 @@ func PrintOrder(c *gin.Context) {
 	// get Order
 	order := c.MustGet("order").(models.Order)
 
+	// get table name
+	table_name := order.GetTableName()
+
 	// get order items
 	orderItems, err := order.GetItems()
 	if err != nil {
@@ -140,6 +148,9 @@ func PrintOrder(c *gin.Context) {
 				printers[printerID] = map[string]interface{}{
 					"items": []map[string]interface{}{},
 					"modifiers": []map[string]interface{}{},
+					"time": time.Now().Format("15:04:05"),
+					"order": order,
+					"table_name": table_name,
 				}
 			}
 
@@ -154,18 +165,19 @@ func PrintOrder(c *gin.Context) {
 	for printer, o := range printers {
 		buf := new(bytes.Buffer)
 		kitchenReceipt.Execute(buf, o)
+		buffer := gopos.RenderTemplate(buf.String())
 
-		data := map[string]interface{}{
-			"print": buf.String(),
-		}
+		// data := map[string]interface{}{
+		// 	"print": buf.String(),
+		// }
 
-		jsonBlob, err := json.Marshal(data)
-		if err != nil {
-			panic(err)
-		}
+		// jsonBlob, err := json.Marshal(data)
+		// if err != nil {
+		// 	panic(err)
+		// }
 
 		// print it!
-		num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print." + printer, string(jsonBlob)))
+		num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print." + printer, buffer.String()))
 		if err != nil {
 			panic(err)
 		}

@@ -2,7 +2,7 @@
 	"mysql": {
 		"host": "127.0.0.1",
 		"user": "root",
-		"pass": "",
+		"pass": "xpressmusic",
 		"name": "orderchef"
 	},
 	"session_db": "127.0.0.1:6379",
