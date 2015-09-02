@@ -7,6 +7,7 @@ import (
 	"lab.castawaylabs.com/orderchef/routes/items"
 	"lab.castawaylabs.com/orderchef/routes/orders"
 	"lab.castawaylabs.com/orderchef/routes/tables"
+	"lab.castawaylabs.com/orderchef/routes/reports"
 )
 
 func Route(r *gin.RouterGroup) {
@@ -19,6 +20,7 @@ func Route(r *gin.RouterGroup) {
 	orders.Router(r)
 	categories.Router(r)
 	items.Router(r)
+	reports.Router(r.Group("/reports"))
 }
 
 func pong(c *gin.Context) {

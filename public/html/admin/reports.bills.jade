@@ -1,0 +1,15 @@
+include reports.dates.jade
+
+h1 Bills Report
+
+h3 Total: £{{ total }}
+
+table.table.table-striped
+	thead: tr
+		th Date
+		th Payment Method
+		th Amount
+	tbody: tr(ng-repeat="bill in bills")
+		td {{ bill.printed_at }}
+		td {{ bill.payment_method.name }}
+		td £{{ bill.total }}
