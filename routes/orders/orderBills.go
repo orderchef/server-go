@@ -16,11 +16,18 @@ import (
 	"github.com/matejkramny/gopos"
 )
 
-var billReceipt = template.Must(template.New("billReceipt").Parse(`[[justify 1]]Taberu
+var billReceipt = template.Must(template.New("billReceipt").Parse(`[[justify 1]]    [[emphesize true]]Address:[[emphesize false]] 100 Cowley Road
+             OX4 1JE Oxford
+[[emphesize true]]Telephone:[[emphesize false]] 01865 434100
+ [[emphesize true]]Facebook:[[emphesize false]] TaberuOxford
+
+Printed [[emphesize true]]{{.time}}[[emphesize false]]
+Bill [[emphesize true]]#{{.billID}}[[emphesize false]]
+[[lf]]
 [[justify 0]]
-{{range .items}} - {{.ItemName}}   GBP {{.ItemPrice}}
-{{end}}
-[[justify 2]]Total: GBP {{.total}}
+{{range .items}}{{.ItemName}}[[spaces "{{.ItemName}}" "{{.ItemPriceFormatted}}"]][[at]]{{.ItemPriceFormatted}}
+[[justify 0]]{{end}}
+[[justify 2]][[emphesize true]]Total:[[emphesize false]] [[at]]{{.total}}
 [[lf]]
 [[lf]]
 [[lf]]
@@ -34,12 +41,12 @@ func getBillTotals(c *gin.Context) {
 		return
 	}
 
-	total, err := db.SelectFloat("select sum(item.price) from order__group_member join order__item as oi on oi.order_id=order__group_member.id join item on item.id=oi.item_id where group_id=?", group.Id)
+	total, err := db.SelectFloat("select sum(item.price * oi.quantity) from order__group_member join order__item as oi on oi.order_id=order__group_member.id join item on item.id=oi.item_id where group_id=?", group.Id)
 	if err != nil {
 		total = 0
 	}
 
-	totalModifiers, err := db.SelectFloat("select sum(cm.price) from order__group_member join order__item as oi on oi.order_id=order__group_member.id join order__item_modifier as oim on oim.order_item_id=oi.id join config__modifier as cm on cm.id=oim.modifier_id where order__group_member.group_id=?", group.Id)
+	totalModifiers, err := db.SelectFloat("select sum(cm.price * oi.quantity) from order__group_member join order__item as oi on oi.order_id=order__group_member.id join order__item_modifier as oim on oim.order_item_id=oi.id join config__modifier as cm on cm.id=oim.modifier_id where order__group_member.group_id=?", group.Id)
 	if err != nil {
 		totalModifiers = 0
 	}
@@ -196,6 +203,8 @@ func printBill(c *gin.Context) {
 	}
 
 	printData := map[string]interface{}{}
+	printData["time"] = time.Now().Format("02-01-2006 15:04")
+	printData["billID"] = bill.ID
 	printData["total"] = bill.Total
 	printData["items"] = bill.Items
 
@@ -234,4 +243,38 @@ func printBill(c *gin.Context) {
 	}
 
 	c.Writer.WriteHeader(204)
+}
+
+func splitBills(c *gin.Context) {
+	db := database.Mysql()
+	group, _ := getGroupById(c)
+
+	var postData struct{
+		Covers int `json:"covers"`
+		PerCover float32 `json:"perCover"`
+	}
+
+	if err := c.Bind(&postData); err != nil {
+		c.JSON(400, err)
+		return
+	}
+
+	for i := 0; i < postData.Covers; i++ {
+		bill := models.OrderBill{GroupID: group.Id, CreatedAt: time.Now(), BillType: "amount", Total: postData.PerCover}
+		if err := db.Insert(&bill); err != nil {
+			panic(err)
+		}
+
+		item := models.OrderBillItem{
+			BillID: bill.ID,
+			ItemName: "-",
+			ItemPrice: postData.PerCover,
+			Discount: 0,
+		}
+		if err := db.Insert(&item); err != nil {
+			panic(err)
+		}
+	}
+
+	c.AbortWithStatus(204)
 }

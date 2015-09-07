@@ -17,6 +17,7 @@ func Router(r *gin.RouterGroup) {
 	r.POST("/settings", UpdateConfig)
 	r.GET("/printers", getPrinters)
 	r.GET("/payment-methods", getPaymentMethods)
+	r.GET("/bill-items", getBillItems)
 
 	tableType.Router(r)
 	orderType.Router(r)
@@ -69,4 +70,15 @@ func getPaymentMethods(c *gin.Context) {
 	}
 
 	c.JSON(200, pm)
+}
+
+func getBillItems(c *gin.Context) {
+	db := database.Mysql()
+	items := []models.ConfigBillItem{}
+
+	if _, err := db.Select(&items, "select * from config__bill_item"); err != nil {
+		panic(err)
+	}
+
+	c.JSON(200, items)
 }

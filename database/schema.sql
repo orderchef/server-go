@@ -24,3 +24,10 @@ create table category_printer (
 	unique unique_index (`printer_id`, `category_id`),
 	unique unique_index_2 (`printer_id`, `item_id`)
 ) engine=InnoDB default charset=utf8;
+
+#alter table order__item add `quantity` int(11) not null default 1;
+alter table order__item change `quantity` `quantity` int(3) not null default 1;
+
+insert into config__bill_item(name, price, is_percent) values ('Card Charge', 2.00, 0), ('Service charge (10%)', 10.00, 1);
+
+alter table order__bill add `bill_type` varchar(255) not null default 'items';

@@ -15,6 +15,7 @@ func Router(r *gin.RouterGroup) {
 			// /order-group/:order_group_id/bills
 			api.GET("", getAllBills)
 			api.POST("", makeBill)
+			api.POST("/split", splitBills)
 			api.GET("/totals", getBillTotals)
 		}(api.Group("/bills"))
 

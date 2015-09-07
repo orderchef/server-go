@@ -12,6 +12,7 @@ type OrderItem struct {
 	OrderId int `db:"order_id" json:"order_id" binding:"required"`
 
 	Notes string `db:"notes" json:"notes"`
+	Quantity int `db:"quantity" json:"quantity"`
 }
 
 func init() {

@@ -14,6 +14,7 @@ func addOrderItem(c *gin.Context) {
 	orderItem := models.OrderItem{}
 	c.Bind(&orderItem)
 
+	orderItem.Quantity = 1
 	orderItem.OrderId = order.Id
 
 	if orderItem.ItemId <= 0 {
@@ -58,6 +59,10 @@ func saveOrderItem(c *gin.Context) {
 	c.Bind(&newOrderItem)
 
 	orderItem.Notes = newOrderItem.Notes
+	orderItem.Quantity = newOrderItem.Quantity
+	if orderItem.Quantity <= 0 {
+		orderItem.Quantity = 1
+	}
 
 	if err := orderItem.Save(); err != nil {
 		util.ServeError(c, err)

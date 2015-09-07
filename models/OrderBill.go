@@ -2,6 +2,7 @@ package models
 
 import (
 	"time"
+	"fmt"
 	"lab.castawaylabs.com/orderchef/database"
 )
 
@@ -13,6 +14,7 @@ type OrderBill struct {
 	PaidAmount float32 `db:"paid_amount" json:"paid_amount"`
 	Total float32 `db:"total" json:"total"`
 	PaymentMethodID int `db:"payment_method_id" json:"payment_method_id"`
+	BillType string `db:"bill_type" json:"bill_type"`
 
 	PrintedAt *time.Time `db:"printed_at" json:"printed_at"`
 	CreatedAt time.Time `db:"created" json:"created"`
@@ -26,6 +28,7 @@ type OrderBillItem struct {
 	OrderItemID *int `db:"order_item_id" json:"order_item_id" form:"order_item_id"`
 	ItemName string `db:"item_name" json:"item_name" form:"item_name"`
 	ItemPrice float32 `db:"item_price" json:"item_price" form:"item_price"`
+	ItemPriceFormatted string `db:"-" json:"-" form:"-"`
 	Discount float32 `db:"discount" json:"discount" form:"discount"`
 }
 
@@ -34,6 +37,10 @@ func (bill *OrderBill) GetItems() error {
 
 	bill.Items = []OrderBillItem{}
 	_, err := db.Select(&bill.Items, "select * from order__bill_item where bill_id=?", bill.ID)
+
+	for i, item := range bill.Items {
+		bill.Items[i].ItemPriceFormatted = fmt.Sprintf("%.2f", item.ItemPrice)
+	}
 
 	return err
 }

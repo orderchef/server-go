@@ -3,6 +3,7 @@ package orders
 import (
 	"time"
 	"bytes"
+	"fmt"
 	"text/template"
 	// "encoding/json"
 	"database/sql"
@@ -16,12 +17,12 @@ import (
 
 var kitchenReceipt = template.Must(template.New("kitchenReceipt").Parse(`[[lf]][[justify 0]]
 {{.time}}
-Table: {{.table_name}}. Order #{{.order.Id}}
+{{.table_name}}. Order #{{.order.Id}}
 {{range .items}}---------------
-{{.itemObject.Name}}
+{{.item.Quantity}}x {{.itemObject.Name}}
 {{range .modifiers}} - {{.group.Name}} ({{.modifier.Name}})
-{{end}}---------------
-{{end}}
+{{end}}{{if .item.Notes}} Notes: {{.item.Notes}}
+{{end}}{{end}}
 [[lf]]
 [[lf]]
 [[lf]]
@@ -166,6 +167,7 @@ func PrintOrder(c *gin.Context) {
 		buf := new(bytes.Buffer)
 		kitchenReceipt.Execute(buf, o)
 		buffer := gopos.RenderTemplate(buf.String())
+		fmt.Println(buf.String())
 
 		// data := map[string]interface{}{
 		// 	"print": buf.String(),

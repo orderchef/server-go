@@ -3,7 +3,7 @@ from escpos import *
 import redis
 import time
 
-epson = printer.Usb(0x04b8, 0x0202, 0, 0)
+epson = printer.Network("192.168.0.66", 9100)
 epson._raw('\x1d@')
 epson._raw(constants.CHARCODE_PC437)
 
