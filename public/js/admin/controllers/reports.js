@@ -25,3 +25,29 @@ app.controller('ReportBillsCtrl', function ($scope, $http, reportDates) {
 		})
 	}
 });
+
+app.controller('ReportCashCtrl', function ($scope, $http, reportDates) {
+	$scope.dates = reportDates;
+
+	reportDates.setup();
+
+	$http.get('/reports/cash/categories').success(function (categories) {
+		$scope.categories = categories;
+		$scope.refreshData();
+	});
+
+	$scope.refreshData = function () {
+		$http.get('/reports/cash' + reportDates.getQuery()).success(function(cash) {
+			$scope.cash = cash;
+		});
+	}
+
+	$scope.createReport = function (report) {
+		$http.post('/reports/cash', report).success(function () {
+			$scope.report = {};
+			$scope.refreshData();
+		}).error(function () {
+			alert('Failed to add report');
+		});
+	}
+});

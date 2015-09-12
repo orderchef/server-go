@@ -8,7 +8,13 @@ import (
 )
 
 func Router(r *gin.RouterGroup) {
+	// bills report
 	r.GET("/bills", getBillsReport)
+
+	// cash report
+	r.GET("/cash", getCashReport)
+	r.POST("/cash", createCashReport)
+	r.GET("/cash/categories", getCashReportCategories)
 }
 
 func getDate(dateString string) (*time.Time, error) {

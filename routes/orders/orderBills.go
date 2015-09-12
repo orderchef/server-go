@@ -3,6 +3,7 @@ package orders
 import (
 	"math"
 	"log"
+	"fmt"
 	"time"
 	"text/template"
 	"bytes"
@@ -23,12 +24,16 @@ var billReceipt = template.Must(template.New("billReceipt").Parse(`[[justify 1]]
 
 Printed [[emphesize true]]{{.time}}[[emphesize false]]
 Bill [[emphesize true]]#{{.billID}}[[emphesize false]]
+Table [[emphesize true]]{{.table_name}}[[emphesize false]]
 [[lf]]
 [[justify 0]]
 {{range .items}}{{.ItemName}}[[spaces "{{.ItemName}}" "{{.ItemPriceFormatted}}"]][[at]]{{.ItemPriceFormatted}}
 [[justify 0]]{{end}}
-[[justify 2]][[emphesize true]]Total:[[emphesize false]] [[at]]{{.total}}
+[[justify 2]][[emphesize true]]Total:[[emphesize false]] [[at]]{{.totalFormatted}}
 [[lf]]
+[[lf]]
+[[justify 1]]Service charge not included
+[[justify 0]][[lf]]
 [[lf]]
 [[lf]]
 [[cut]]`))
@@ -198,6 +203,11 @@ func printBill(c *gin.Context) {
 
 	bill := c.MustGet("bill").(models.OrderBill)
 
+	var table models.Table
+	if err := db.SelectOne(&table, "select name from table__items join order__group on order__group.table_id=table__items.id where order__group.id=?", bill.GroupID); err != nil {
+		table = models.Table{}
+	}
+
 	if err := bill.GetItems(); err != nil {
 		panic(err)
 	}
@@ -206,7 +216,9 @@ func printBill(c *gin.Context) {
 	printData["time"] = time.Now().Format("02-01-2006 15:04")
 	printData["billID"] = bill.ID
 	printData["total"] = bill.Total
+	printData["totalFormatted"] = fmt.Sprintf("%.2f", bill.Total)
 	printData["items"] = bill.Items
+	printData["table_name"] = table.Name
 
 	buf := new(bytes.Buffer)
 	billReceipt.Execute(buf, printData)
