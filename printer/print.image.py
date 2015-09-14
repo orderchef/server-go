@@ -8,8 +8,8 @@ except ImportError:
 import redis
 import time
 
-epson = printer.Network("192.168.0.66", 9100)
-epson._raw('\x1d@')
+#epson = printer.Network("192.168.0.66", 9100)
+#epson._raw('\x1d@')
 
 r = redis.StrictRedis(host='192.168.0.64', port=6379, db=0)
 p = r.pubsub()
@@ -38,7 +38,7 @@ if im.size[0] > 512:
 if im.size[1] > 255:
 	raise ImageSizeError()
 
-im_border = epson._check_image_size(im.size[0])
+im_border = printer.Network("192.168.0.66", 9100)._check_image_size(im.size[0])
 for i in range(im_border[0]):
 	im_left += "0"
 for i in range(im_border[1]):
@@ -72,13 +72,17 @@ while True:
 	message = p.get_message()
 
 	if message and message["type"] == "message":
+		epson = printer.Network("192.168.0.66", 9100)
+		epson._raw('\x1d@')
 		# print message["data"]
 		epson.set('center')
 		epson.text(constants.CTL_LF)
+		epson.text(constants.CTL_LF)
+		epson.text('\n')
 		# epson.image("taberu-small.jpg")
 		epson._print_image(pix_line, img_size)
 
 		epson.text(message["data"])
 		# epson.cut()
 
-	time.sleep(0.001)
+	time.sleep(0.01)
