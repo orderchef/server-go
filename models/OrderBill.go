@@ -1,35 +1,39 @@
 package models
 
 import (
-	"time"
 	"fmt"
 	"lab.castawaylabs.com/orderchef/database"
+	"time"
 )
 
 type OrderBill struct {
 	ID int `db:"id" json:"id"`
 
-	GroupID int `db:"group_id" json:"group_id"`
-	Paid bool `db:"paid" json:"paid"`
-	PaidAmount float32 `db:"paid_amount" json:"paid_amount"`
-	Total float32 `db:"total" json:"total"`
-	PaymentMethodID int `db:"payment_method_id" json:"payment_method_id"`
-	BillType string `db:"bill_type" json:"bill_type"`
+	GroupID int     `db:"group_id" json:"group_id"`
+	Paid    bool    `db:"paid" json:"paid"`
+	Total   float32 `db:"total" json:"total"`
 
 	PrintedAt *time.Time `db:"printed_at" json:"printed_at"`
-	CreatedAt time.Time `db:"created" json:"created"`
+	CreatedAt time.Time  `db:"created" json:"created"`
 
 	Items []OrderBillItem `db:"-" json:"bill_items" form:"items"`
 }
 
 type OrderBillItem struct {
-	ID int `db:"id" json:"-" form:"-"`
-	BillID int `db:"bill_id" json:"bill_id" form:"bill_id"`
-	OrderItemID *int `db:"order_item_id" json:"order_item_id" form:"order_item_id"`
-	ItemName string `db:"item_name" json:"item_name" form:"item_name"`
-	ItemPrice float32 `db:"item_price" json:"item_price" form:"item_price"`
-	ItemPriceFormatted string `db:"-" json:"-" form:"-"`
-	Discount float32 `db:"discount" json:"discount" form:"discount"`
+	ID                 int     `db:"id" json:"-" form:"-"`
+	BillID             int     `db:"bill_id" json:"bill_id"`
+	OrderItemID        *int    `db:"order_item_id" json:"order_item_id"`
+	ItemName           string  `db:"item_name" json:"item_name"`
+	ItemPrice          float32 `db:"item_price" json:"item_price"`
+	ItemPriceFormatted string  `db:"-" json:"-" form:"-"`
+	Deleted            bool    `db:"deleted" json:"deleted"`
+	Discount           float32 `db:"discount" json:"discount"`
+}
+
+type OrderBillPayment struct {
+	BillID          int     `db:"bill_id" json:"bill_id" binding:"required"`
+	PaymentMethodID int     `db:"payment_method_id" json:"payment_method_id" binding:"required"`
+	Amount          float32 `db:"amount" json:"amount" binding:"required"`
 }
 
 func (bill *OrderBill) GetItems() error {

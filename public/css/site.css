@@ -7,3 +7,7 @@
 .test > h1 {
 	margin-top:0;
 }
+
+.monotype {
+	font-family: Monaco, monospace;
+}

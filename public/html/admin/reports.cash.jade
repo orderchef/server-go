@@ -1,18 +1,9 @@
 include reports.dates.jade
 
 h1 Cash Report
-
-form.form-inline(name="cashReportForm")
-	.form-group
-		label Category:
-		select.form-control(ng-options="c as c for (i, c) in categories" ng-model="report.category")
-	.form-group
-		label Category (override):
-		input.form-control(type="text" ng-model="report.category" required)
-	.form-group
-		label Amount:
-		input.form-control(type="number" ng-model="report.amount" required)
-	button.btn.btn-success(ng-disabled="cashReportForm.$invalid" ng-click="createReport(report)") Create
+	.btn-group.pull-right
+		button.btn.btn-default(ng-click="settings()"): i.fa.fa-cogs.fa-fw
+		button.btn.btn-success(ng-click="createReport()") New Cash Report
 
 br
 
@@ -20,6 +11,13 @@ table.table.table-striped
 	thead: tr
 		th Category
 		th Amount
-	tbody: tr(ng-repeat="(c, val) in cash")
-		td {{ c }}
-		td £{{ val.toFixed(2) }}
+	tbody
+		tr(ng-repeat="(c, val) in cash")
+			td {{ c }}
+			td £{{ val.toFixed(2) }}
+		tr
+			td --
+			td --
+		tr
+			th Gross
+			td {{ gross }}

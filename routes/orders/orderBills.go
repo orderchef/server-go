@@ -1,42 +1,41 @@
 package orders
 
 import (
-	"math"
-	"log"
-	"fmt"
-	"time"
-	"text/template"
 	"bytes"
+	"fmt"
+	"log"
+	"math"
+	"text/template"
+	"time"
 	// "encoding/json"
-	"github.com/garyburd/redigo/redis"
 	"database/sql"
-	"lab.castawaylabs.com/orderchef/models"
-	"lab.castawaylabs.com/orderchef/util"
-	"lab.castawaylabs.com/orderchef/database"
+	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/matejkramny/gopos"
+	"lab.castawaylabs.com/orderchef/database"
+	"lab.castawaylabs.com/orderchef/models"
+	"lab.castawaylabs.com/orderchef/util"
 )
 
-var billReceipt = template.Must(template.New("billReceipt").Parse(`[[justify 1]]    [[emphesize true]]Address:[[emphesize false]] 100 Cowley Road
-             OX4 1JE Oxford
-[[emphesize true]]Telephone:[[emphesize false]] 01865 434100
- [[emphesize true]]Facebook:[[emphesize false]] TaberuOxford
+var billReceipt *template.Template
 
-Printed [[emphesize true]]{{.time}}[[emphesize false]]
-Bill [[emphesize true]]#{{.billID}}[[emphesize false]]
-Table [[emphesize true]]{{.table_name}}[[emphesize false]]
-[[lf]]
-[[justify 0]]
-{{range .items}}{{.ItemName}}[[spaces "{{.ItemName}}" "{{.ItemPriceFormatted}}"]][[at]]{{.ItemPriceFormatted}}
-[[justify 0]]{{end}}
-[[justify 2]][[emphesize true]]Total:[[emphesize false]] [[at]]{{.totalFormatted}}
-[[lf]]
-[[lf]]
-[[justify 1]]Service charge not included
-[[justify 0]][[lf]]
-[[lf]]
-[[lf]]
-[[cut]]`))
+func init() {
+	db := database.Mysql()
+
+	billTemplate, err := db.SelectStr("select value from config where name='customer_bill'")
+	if err != nil {
+		fmt.Println("Cannot find customer_bill in config table")
+		return
+	}
+
+	tmpl, err := template.New("customer_bill").Parse(billTemplate)
+	if err != nil {
+		fmt.Println("Cannot compile customer_bill template")
+		return
+	}
+
+	billReceipt = tmpl
+}
 
 // get totals - items that are paid, amounts
 func getBillTotals(c *gin.Context) {
@@ -58,15 +57,15 @@ func getBillTotals(c *gin.Context) {
 
 	total += totalModifiers
 
-	methods, _ := db.Select(models.OrderBill{}, "select sum(total) as paid_amount, payment_method_id from order__bill where paid=? and group_id=? group by payment_method_id", true, group.Id)
+	methods, _ := db.Select(models.OrderBill{}, "select sum(total) as paid_amount, payment_method_id from order__bill_payment join order__bill as bill on bill.id = order__bill_payment.bill_id where bill.group_id=? group by payment_method_id", group.Id)
 
 	c.JSON(200, map[string]interface{}{
-		"paid": methods,
+		"paid":  methods,
 		"total": total,
 	})
 }
 
- // get all bills
+// get all bills
 func getAllBills(c *gin.Context) {
 	db := database.Mysql()
 	group, err := getGroupById(c)
@@ -169,9 +168,9 @@ func updateBill(c *gin.Context) {
 		}
 	}
 
-	if bill.Paid = false; roundPrice(float64(bill.PaidAmount)) == roundPrice(float64(bill.Total)) && bill.Total > 0 {
-		bill.Paid = true
-	}
+	// if bill.Paid = false; roundPrice(float64(bill.PaidAmount)) == roundPrice(float64(bill.Total)) && bill.Total > 0 {
+	// 	bill.Paid = true
+	// }
 
 	if _, err := db.Update(&bill); err != nil {
 		panic(err)
@@ -197,6 +196,11 @@ func deleteBill(c *gin.Context) {
 }
 
 func printBill(c *gin.Context) {
+	if billReceipt == nil {
+		c.AbortWithStatus(500)
+		return
+	}
+
 	db := database.Mysql()
 	redis_c := database.Redis.Get()
 	defer redis_c.Close()
@@ -261,8 +265,8 @@ func splitBills(c *gin.Context) {
 	db := database.Mysql()
 	group, _ := getGroupById(c)
 
-	var postData struct{
-		Covers int `json:"covers"`
+	var postData struct {
+		Covers   int     `json:"covers"`
 		PerCover float32 `json:"perCover"`
 	}
 
@@ -272,16 +276,16 @@ func splitBills(c *gin.Context) {
 	}
 
 	for i := 0; i < postData.Covers; i++ {
-		bill := models.OrderBill{GroupID: group.Id, CreatedAt: time.Now(), BillType: "amount", Total: postData.PerCover}
+		bill := models.OrderBill{GroupID: group.Id, CreatedAt: time.Now(), Total: postData.PerCover}
 		if err := db.Insert(&bill); err != nil {
 			panic(err)
 		}
 
 		item := models.OrderBillItem{
-			BillID: bill.ID,
-			ItemName: "-",
+			BillID:    bill.ID,
+			ItemName:  "-",
 			ItemPrice: postData.PerCover,
-			Discount: 0,
+			Discount:  0,
 		}
 		if err := db.Insert(&item); err != nil {
 			panic(err)
@@ -289,4 +293,29 @@ func splitBills(c *gin.Context) {
 	}
 
 	c.AbortWithStatus(204)
+}
+
+func setBillPayment(c *gin.Context) {
+	var payment models.OrderBillPayment
+	if err := c.Bind(&payment); err != nil {
+		c.JSON(400, payment)
+		return
+	}
+
+	if _, err := database.Mysql().Exec("replace into order__bill_payment set bill_id=?, payment_method_id=?, amount=?", payment.BillID, payment.PaymentMethodID, payment.Amount); err != nil {
+		panic(err)
+	}
+
+	c.AbortWithStatus(204)
+}
+
+func getBillPayments(c *gin.Context) {
+	bill := c.MustGet("bill").(models.OrderBill)
+	var payments []models.OrderBillPayment
+
+	if _, err := database.Mysql().Select(&payments, "select * from order__bill_payment where bill_id=?", bill.ID); err != nil {
+		panic(err)
+	}
+
+	c.JSON(200, payments)
 }

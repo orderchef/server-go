@@ -26,28 +26,108 @@ app.controller('ReportBillsCtrl', function ($scope, $http, reportDates) {
 	}
 });
 
-app.controller('ReportCashCtrl', function ($scope, $http, reportDates) {
+app.controller('ReportCashCtrl', function ($scope, $http, $modal, $rootScope, reportDates, $interpolate) {
 	$scope.dates = reportDates;
 
 	reportDates.setup();
 
-	$http.get('/reports/cash/categories').success(function (categories) {
-		$scope.categories = categories;
+	$http.get('/config/settings/cashup_categories').success(function (categories) {
+		try {
+			$scope.categories = JSON.parse(categories.value);
+		} catch (e) {
+			$scope.categories = [];
+		}
+	}).error(function () {
+		$scope.categories = [];
+	});
+
+	$scope.formula = 'Not Set Up';
+	$http.get('/config/settings/cashup_formula').success(function (formula) {
+		$scope.formula = formula.value;
 		$scope.refreshData();
 	});
 
 	$scope.refreshData = function () {
 		$http.get('/reports/cash' + reportDates.getQuery()).success(function(cash) {
 			$scope.cash = cash;
+
+			var exp = $interpolate($scope.formula);
+			$scope.gross = exp({ c: cash });
 		});
 	}
 
-	$scope.createReport = function (report) {
-		$http.post('/reports/cash', report).success(function () {
-			$scope.report = {};
-			$scope.refreshData();
-		}).error(function () {
-			alert('Failed to add report');
+	$scope.settings = function () {
+		var scope = $rootScope.$new();
+		scope.categories = $scope.categories;
+
+		var modal = $modal.open({
+			templateUrl: '/public/html/admin/reports.cash.settings.html',
+			scope: scope,
+			controller: function ($scope, $http, $modalInstance) {
+				$scope.formula = '';
+				$http.get('/config/settings/cashup_formula').success(function (formula) {
+					$scope.formula = formula.value;
+				});
+
+				$scope.save = function () {
+					$http.put('/config/settings/cashup_categories', {
+						name: 'cashup_categories',
+						value: JSON.stringify($scope.categories)
+					}).success(function () {
+						$http.put('/config/settings/cashup_formula', {
+							name: 'cashup_formula',
+							value: $scope.formula
+						}).success(function () {
+							$modalInstance.close();
+						}).error(function () {
+							alert('Could not save settings');
+						});
+					}).error(function () {
+						alert('Could not save settings');
+					});
+				}
+			}
 		});
+	}
+
+	$scope.createReport = function () {
+		scope = $rootScope.$new();
+		scope.categories = $scope.categories;
+
+		var modal = $modal.open({
+			scope: scope,
+			templateUrl: '/public/html/admin/reports.cash.new.html',
+			controller: function ($scope, $modalInstance) {
+				$scope.report = {
+					date: new Date(),
+					data: {}
+				};
+				$scope.createReport = function (report) {
+					$modalInstance.close(report);
+				}
+			}
+		});
+
+		modal.close = function (report) {
+			var data = [];
+			for (var key in report.data) {
+				if (!report.data.hasOwnProperty(key)) continue;
+
+				data.push({
+					date: report.date,
+					category: key,
+					amount: report.data[key]
+				});
+			}
+
+			async.eachSeries(data, function (rep, cb) {
+				$http.post('/reports/cash', rep).success(function () {
+					cb();
+				}).error(function () {
+					alert('Failed to add report');
+					cb('');
+				});
+			}, $scope.refreshData);
+		};
 	}
 });

@@ -1,0 +1,87 @@
+form.form-horizontal
+  .form-group
+    label.control-label.col-md-3 Kitchen Receipt
+    .col-md-6.col-sm-9
+      textarea.form-control.monotype(ng-model="kitchen_receipt.value" rows="10" style="font-size: 10px;")
+      table.table.table-hover
+        thead: tr
+          th(ng-non-bindable) {{property}}
+          th Description
+        tbody
+          tr
+            td.monotype .time
+            td Current time formatted
+          tr
+            td.monotype .order
+            td Order object
+          tr
+            td.monotype .table_name
+            td Table Name
+  .form-group
+    label.control-label.col-md-3 Customer Bill
+    .col-md-6.col-sm-9
+      textarea.form-control.monotype(ng-model="customer_bill.value" rows="10" style="font-size: 10px;")
+      table.table.table-hover
+        thead: tr
+          th(ng-non-bindable) {{property}}
+          th Description
+        tbody
+          tr
+            td.monotype .time
+            td Current time formatted
+          tr
+            td.monotype .billID
+            td Bill ID
+          tr
+            td.monotype .table_name
+            td Table Name
+          tr
+            td.monotype .totalFormatted
+            td Bill Total
+  .form-group
+    label.control-label.col-md-3 Restaurant Bill
+    .col-md-6.col-sm-9: textarea.form-control.monotype(ng-model="restaurant_bill.value" rows="10" style="font-size: 10px;")
+  .form-group
+    .col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="save()") Save
+
+legend
+  h3 Square brackets (post-processing)
+  p example: [[lf]]
+  table.table.table-hover
+    thead: tr
+      th Command
+      th Description
+    tbody
+      tr
+        td.monotype lf
+        td linefeed
+      tr
+        td.monotype feed x
+        td Feed x lines
+      tr
+        td.monotype reverseFeed x
+        td Reverse feed x lines
+      tr
+        td.monotype cut
+        td Full cut
+      tr
+        td.monotype underline true/false
+        td Set underline on/off
+      tr
+        td.monotype emphesize true/false
+        td Set emphesize on/off
+      tr
+        td.monotype doubleStrike true/false
+        td Set Double strike on/off
+      tr
+        td.monotype font 0/1/2
+        td Set font
+      tr
+        td.monotype justify 0/1/2
+        td Set Justification left/center/right
+      tr
+        td.monotype reverseBlackWhite true/false
+        td Set Reverse Black &amp; White Print on/off
+      tr
+        td.monotype spaces "text" "text2"
+        td Used to generate spaces between left string and right string to make the right string right-aligned.

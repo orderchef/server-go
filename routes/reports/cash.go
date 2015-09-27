@@ -1,7 +1,6 @@
 package reports
 
 import (
-	"time"
 	"github.com/gin-gonic/gin"
 	"lab.castawaylabs.com/orderchef/database"
 	"lab.castawaylabs.com/orderchef/models"
@@ -15,9 +14,9 @@ func getCashReport(c *gin.Context) {
 		return
 	}
 
-	var reports []struct{
-		Category string `db:"category"`
-		Amount float32 `db:"amount"`
+	var reports []struct {
+		Category string  `db:"category"`
+		Amount   float32 `db:"amount"`
 	}
 	if _, err := db.Select(&reports, "select SUM(amount) as amount, category from report__cash where (date between ? and ?) group by category", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05")); err != nil {
 		panic(err)
@@ -45,7 +44,10 @@ func createCashReport(c *gin.Context) {
 		return
 	}
 
-	report.Date = time.Now()
+	if len(report.Category) == 0 {
+		c.AbortWithStatus(400)
+		return
+	}
 
 	if err := db.Insert(&report); err != nil {
 		panic(err)

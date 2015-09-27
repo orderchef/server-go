@@ -5,8 +5,8 @@ import (
 )
 
 type DBConfig struct {
-	Name  string `db:"name"`
-	Value string `db:"value"`
+	Name  string `db:"name" json:"name"`
+	Value string `db:"value" json:"value"`
 }
 
 type Config struct {
@@ -56,10 +56,10 @@ func (config *Config) Save() error {
 	}
 
 	keys := [4]DBConfig{
-		DBConfig{Name: "is_setup", Value: isSetup},
-		DBConfig{Name: "venue_name", Value: config.VenueName},
-		DBConfig{Name: "client_id", Value: config.ClientId},
-		DBConfig{Name: "api_key", Value: config.ApiKey},
+		{Name: "is_setup", Value: isSetup},
+		{Name: "venue_name", Value: config.VenueName},
+		{Name: "client_id", Value: config.ClientId},
+		{Name: "api_key", Value: config.ApiKey},
 	}
 
 	for _, key := range keys {

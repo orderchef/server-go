@@ -18,6 +18,7 @@
     "bootstrap": "~3.3.1",
     "angular-ui-router": "~0.2.15",
     "bootstrap-datepicker": "~1.4.0",
-    "momentjs": "~2.10.6"
+    "momentjs": "~2.10.6",
+    "angular-bootstrap": "~0.13.4"
   }
 }

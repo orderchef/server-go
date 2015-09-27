@@ -1,20 +1,22 @@
 package config
 
 import (
-	"log"
-	"github.com/gin-gonic/gin"
 	"github.com/garyburd/redigo/redis"
+	"github.com/gin-gonic/gin"
+	"lab.castawaylabs.com/orderchef/database"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/routes/config/modifiers"
 	"lab.castawaylabs.com/orderchef/routes/config/orderType"
 	"lab.castawaylabs.com/orderchef/routes/config/tableType"
 	"lab.castawaylabs.com/orderchef/util"
-	"lab.castawaylabs.com/orderchef/database"
+	"log"
 )
 
 func Router(r *gin.RouterGroup) {
 	r.GET("/settings", GetConfig)
 	r.POST("/settings", UpdateConfig)
+	r.GET("/settings/:settings_key", getConfigByKey)
+	r.PUT("/settings/:settings_key", saveConfigByKey)
 	r.GET("/printers", getPrinters)
 	r.GET("/payment-methods", getPaymentMethods)
 	r.GET("/bill-items", getBillItems)
@@ -44,6 +46,35 @@ func GetConfig(c *gin.Context) {
 	}
 
 	c.JSON(200, config)
+}
+
+func getConfigByKey(c *gin.Context) {
+	db := database.Mysql()
+
+	var key models.DBConfig
+	if err := db.SelectOne(&key, "select * from config where name=?", c.Params.ByName("settings_key")); err != nil {
+		c.AbortWithStatus(404)
+		return
+	}
+
+	c.JSON(200, key)
+}
+
+func saveConfigByKey(c *gin.Context) {
+	db := database.Mysql()
+
+	var key models.DBConfig
+	if err := c.Bind(&key); err != nil {
+		c.AbortWithStatus(400)
+		return
+	}
+
+	if _, err := db.Exec("insert into config (name, value) values (?, ?) on duplicate key update value=?", key.Name, key.Value, key.Value); err != nil {
+		c.AbortWithStatus(500)
+		return
+	}
+
+	c.AbortWithStatus(204)
 }
 
 func getPrinters(c *gin.Context) {

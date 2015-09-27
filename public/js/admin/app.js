@@ -1,10 +1,10 @@
-var app = angular.module('orderchef', ['ui.router']);
+var app = angular.module('orderchef', ['ui.router', 'ui.bootstrap']);
 
 app.config(function ($httpProvider) {
 	$httpProvider.interceptors.push(function ($q) {
 		return {
 			'request': function (config) {
-				if (config.url.indexOf('/public') === -1) config.url = '/api' + config.url;
+				if (!(config.url.indexOf('/public') != -1 || config.url.indexOf('template/') != -1)) config.url = '/api' + config.url;
 
 				return config || $q.when(config);
 			}
@@ -148,6 +148,11 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 				return d.promise;
 			}
 		}
+	})
+	.state('config.bills', {
+		url: '/bills',
+		templateUrl: base + '/config.bills.html',
+		controller: 'ConfigBillsCtrl'
 	})
 
 	.state('categories', {

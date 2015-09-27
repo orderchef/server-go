@@ -1,0 +1,22 @@
+.modal-header
+	h3.modal-title Settings
+
+.modal-body
+	form.form-horizontal
+		.form-group
+			label.control-label.col-sm-4 Formula
+			.col-sm-6
+				textarea.form-control(ng-model="formula")
+		.form-group
+			label.control-label.col-sm-4 Categories
+			.col-sm-6
+				button.btn.btn-success(ng-click="categories.push('')") Add Category
+
+		.form-group(ng-repeat="category in categories track by $index")
+			.col-sm-4: button.btn.btn-danger.pull-right(ng-click="categories.splice($index, 1)"): i.fa.fa-times.fa-fw
+			.col-sm-6
+				input.form-control(type="text" ng-model="categories[$index]")
+		br
+		.form-group
+			.col-sm-6.col-md-6.col-sm-offset-4.col-md-offset-4
+				button.btn.btn-success(ng-click="save()") Save

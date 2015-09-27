@@ -27,6 +27,7 @@ html(ng-app="orderchef")
               li: a(ui-sref="config.table_types") Table Types
               li: a(ui-sref="config.order_types") Order Types
               li: a(ui-sref="config.modifiers") Modifiers
+              li: a(ui-sref="config.bills") Bills
 
     .container-fluid
       ui-view
@@ -35,6 +36,7 @@ html(ng-app="orderchef")
     script(src="/public/components/bootstrap/dist/js/bootstrap.min.js")
     script(src="/public/components/angular/angular.js")
     script(src="/public/components/angular-ui-router/release/angular-ui-router.js")
+    script(src="/public/components/angular-bootstrap/ui-bootstrap-tpls.min.js")
     script(src="/public/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js")
     script(src="/public/components/async/lib/async.js")
     script(src="/public/components/momentjs/min/moment.min.js")
@@ -55,3 +57,4 @@ html(ng-app="orderchef")
     script(src="/public/js/admin/controllers/categories.js")
     script(src="/public/js/admin/controllers/items.js")
     script(src="/public/js/admin/controllers/reports.js")
+    script(src="/public/js/admin/controllers/config.bills.js")

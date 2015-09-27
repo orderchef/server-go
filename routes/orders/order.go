@@ -1,32 +1,39 @@
 package orders
 
 import (
-	"time"
 	"bytes"
 	"fmt"
 	"text/template"
+	"time"
 	// "encoding/json"
 	"database/sql"
+	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
+	"github.com/matejkramny/gopos"
+	"lab.castawaylabs.com/orderchef/database"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/util"
-	"lab.castawaylabs.com/orderchef/database"
-	"github.com/garyburd/redigo/redis"
-	"github.com/matejkramny/gopos"
 )
 
-var kitchenReceipt = template.Must(template.New("kitchenReceipt").Parse(`[[lf]][[justify 0]]
-{{.time}}
-{{.table_name}}. Order #{{.order.Id}}
-{{range .items}}---------------
-{{.item.Quantity}}x {{.itemObject.Name}}
-{{range .modifiers}} - {{.group.Name}} ({{.modifier.Name}})
-{{end}}{{if .item.Notes}} Notes: {{.item.Notes}}
-{{end}}{{end}}
-[[lf]]
-[[lf]]
-[[lf]]
-[[cut]]`))
+var kitchenReceipt *template.Template
+
+func init() {
+	db := database.Mysql()
+
+	templateString, err := db.SelectStr("select value from config where name='kitchen_receipt'")
+	if err != nil {
+		fmt.Println("Cannot find kitchen_receipt in config table")
+		return
+	}
+
+	tmpl, err := template.New("kitchen_receipt").Parse(templateString)
+	if err != nil {
+		fmt.Println("Cannot compile kitchen_receipt template")
+		return
+	}
+
+	kitchenReceipt = tmpl
+}
 
 func getOrderById(c *gin.Context) {
 	order_id, err := util.GetIntParam("order_id", c)
@@ -80,6 +87,11 @@ func DeleteOrder(c *gin.Context) {
 }
 
 func PrintOrder(c *gin.Context) {
+	if kitchenReceipt == nil {
+		c.AbortWithStatus(500)
+		return
+	}
+
 	db := database.Mysql()
 	redis_c := database.Redis.Get()
 	defer redis_c.Close()
@@ -119,7 +131,7 @@ func PrintOrder(c *gin.Context) {
 
 			modifiers = append(modifiers, map[string]interface{}{
 				"modifier": modifier,
-				"group": modifierGroup,
+				"group":    modifierGroup,
 			})
 		}
 
@@ -144,20 +156,20 @@ func PrintOrder(c *gin.Context) {
 			}
 		}
 
-		for printerID, _ := range final_printers {
+		for printerID := range final_printers {
 			if printers[printerID] == nil {
 				printers[printerID] = map[string]interface{}{
-					"items": []map[string]interface{}{},
-					"modifiers": []map[string]interface{}{},
-					"time": time.Now().Format("15:04:05"),
-					"order": order,
+					"items":      []map[string]interface{}{},
+					"modifiers":  []map[string]interface{}{},
+					"time":       time.Now().Format("15:04:05"),
+					"order":      order,
 					"table_name": table_name,
 				}
 			}
 
 			printers[printerID]["items"] = append(printers[printerID]["items"].([]map[string]interface{}), map[string]interface{}{
-				"item": item,
-				"modifiers": modifiers,
+				"item":       item,
+				"modifiers":  modifiers,
 				"itemObject": itemObject,
 			})
 		}
@@ -179,7 +191,7 @@ func PrintOrder(c *gin.Context) {
 		// }
 
 		// print it!
-		num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print." + printer, buffer.String()))
+		num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print."+printer, buffer.String()))
 		if err != nil {
 			panic(err)
 		}

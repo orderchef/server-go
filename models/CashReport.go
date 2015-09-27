@@ -1,16 +1,16 @@
 package models
 
 import (
-	"time"
 	"lab.castawaylabs.com/orderchef/database"
+	"time"
 )
 
 type CashReport struct {
 	ID int `db:"id" json:"id"`
 
-	Category string `db:"category" json:"category"`
-	Amount float32 `db:"amount" json:"amount"`
-	Date time.Time `db:"date" json:"date"`
+	Category string    `db:"category" json:"category" binding:"required"`
+	Amount   float32   `db:"amount" json:"amount"`
+	Date     time.Time `db:"date" json:"date" binding:"required"`
 }
 
 func init() {

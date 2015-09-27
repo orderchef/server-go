@@ -34,3 +34,45 @@ alter table order__bill add `bill_type` varchar(255) not null default 'items';
 
 alter table report__cash add index (`date`);
 alter table report__cash add index (`category`);
+
+alter table config modify value TEXT NOT NULL;
+
+insert into config set name='kitchen_receipt', value='[[lf]][[justify 0]]
+{{.time}}
+{{.table_name}}. Order #{{.order.Id}}
+{{range .items}}---------------
+{{.item.Quantity}}x {{.itemObject.Name}}
+{{range .modifiers}} - {{.group.Name}} ({{.modifier.Name}})
+{{end}}{{if .item.Notes}} Notes: {{.item.Notes}}
+{{end}}{{end}}
+[[lf]]
+[[lf]]
+[[lf]]
+[[cut]]';
+
+insert into config set name='customer_bill', value='[[justify 1]]
+
+Printed [[emphesize true]]{{.time}}[[emphesize false]]
+Bill [[emphesize true]]#{{.billID}}[[emphesize false]]
+Table [[emphesize true]]{{.table_name}}[[emphesize false]]
+[[lf]]
+[[justify 0]]
+{{range .items}}{{.ItemName}}[[spaces "{{.ItemName}}" "{{.ItemPriceFormatted}}"]][[at]]{{.ItemPriceFormatted}}
+[[justify 0]]{{end}}
+[[justify 2]][[emphesize true]]Total:[[emphesize false]] [[at]]{{.totalFormatted}}
+[[lf]]
+[[lf]]
+[[justify 1]]Service charge not included
+[[justify 0]][[lf]]
+[[lf]]
+[[lf]]
+[[cut]]';
+
+alter table order__bill drop `paid_amount`, drop `payment_method_id`, drop `bill_type`;
+alter table order__bill_item add `deleted` smallint(1) not null default 0;
+create table `order__bill_payment` (
+	`bill_id` int(11) not null,
+	`payment_method_id` int(11) not null,
+	`amount` double not null,
+	unique key `bill_method` (`bill_id`, `payment_method_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
