@@ -2,3 +2,4 @@ gin-bin
 public/components
 public/html/*.html
 public/html/*/*.html
+build/
