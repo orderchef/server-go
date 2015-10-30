@@ -17,15 +17,21 @@ app.service('reportDates', function () {
 			$($('.input-daterange input')[1])
 		];
 
-		pickers[0].datepicker('update', this.start);
-		pickers[1].datepicker('update', this.end);
+		pickers[0].datepicker('update', self.start);
+		pickers[1].datepicker('update', self.end);
 
 		pickers[0].on('changeDate', self.datesChanged);
 		pickers[1].on('changeDate', self.datesChanged);
 
 		var start = localStorage['report_start'];
 		var end = localStorage['report_end'];
-		if (!start || !end) return;
+		var last = localStorage['last_saved'];
+		if (!start || !end || !last) return;
+
+		if (last - Date.now() > 86400) {
+			start = Date.now()
+			end = Date.now()
+		}
 
 		start = new Date(parseInt(start));
 		end = new Date(parseInt(end));
@@ -43,6 +49,7 @@ app.service('reportDates', function () {
 	this.datesChanged = function () {
 		localStorage['report_start'] = self.getDate(self.start).valueOf();
 		localStorage['report_end'] = self.getDate(self.end).valueOf();
+		localStorage['last_saved'] = self.getDate(Date.now());
 	}
 
 	this.getDate = function (date) {
