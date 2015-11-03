@@ -194,4 +194,9 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 		templateUrl: base + '/reports.cash.html',
 		controller: 'ReportCashCtrl'
 	})
+	.state('reports.popularItems', {
+		url: '/popularItems',
+		templateUrl: base + '/reports.popularItems.html',
+		controller: 'PopularItemsReportCtrl'
+	})
 });

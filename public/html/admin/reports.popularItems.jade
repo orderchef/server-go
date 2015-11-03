@@ -1,0 +1,14 @@
+include reports.dates.jade
+
+h1 Popular Items Report
+
+br
+
+table.table.table-striped
+	thead: tr
+		th # Sold
+		th Item Name
+	tbody
+		tr(ng-repeat="item in popularItems")
+			td {{ item.Quantity }}
+			td {{ item.Name }}

@@ -15,6 +15,7 @@ func Router(r *gin.RouterGroup) {
 	r.GET("/cash", getCashReport)
 	r.POST("/cash", createCashReport)
 	r.GET("/cash/categories", getCashReportCategories)
+	r.GET("/popularItems", getPopularItems)
 }
 
 func getDate(dateString string) (*time.Time, error) {

@@ -16,10 +16,8 @@ html(ng-app="orderchef")
         ul.nav.navbar-nav
           li: a(ui-sref="reports.bills") Bills Report
           li: a(ui-sref="reports.cash") Cash Report
+          li: a(ui-sref="reports.popularItems") Sold Items Report
         ul.nav.navbar-nav.pull-right
-          li: a(ui-sref="tables") Tables
-          li: a(ui-sref="categories") Categories
-          li: a(ui-sref="config.items") Items
           li.dropdown
             a.dropdown-toggle(href="" data-toggle="dropdown") Config
               span.caret
@@ -28,6 +26,9 @@ html(ng-app="orderchef")
               li: a(ui-sref="config.order_types") Order Types
               li: a(ui-sref="config.modifiers") Modifiers
               li: a(ui-sref="config.bills") Bills
+          li: a(ui-sref="tables") Tables
+          li: a(ui-sref="categories") Categories
+          li: a(ui-sref="config.items") Items
 
     .container-fluid
       ui-view

@@ -142,3 +142,17 @@ app.controller('ReportCashCtrl', function ($scope, $http, $modal, $rootScope, re
 		};
 	}
 });
+
+app.controller('PopularItemsReportCtrl', function ($scope, $http, reportDates) {
+	reportDates.setup(function () {
+		$scope.refreshData();
+	});
+
+	$scope.refreshData = function () {
+		$http.get('/reports/popularItems' + reportDates.getQuery()).success(function(popularItems) {
+			$scope.popularItems = popularItems;
+		});
+	}
+
+	$scope.refreshData();
+})
