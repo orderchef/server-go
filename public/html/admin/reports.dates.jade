@@ -6,7 +6,10 @@
 //- 	button.btn.btn-default Last Week
 //- 	button.btn.btn-default Last Month
 
-.input-group.input-daterange
-	input.form-control(type="text" ng-model="dates.start" ng-change="refreshData()")
-	span.input-group-addon to
-	input.form-control(type="text" ng-model="dates.end" ng-change="refreshData()")
+#datepicker
+	.range-start(style="width: 220px; display: inline-block;")
+	.range-end(style="width: 220px; display: inline-block;")
+
+//-.input-group.input-daterange
+	input#datepickerStart.form-control(type="text" ng-ssmodel="dates.start" value="03/01/2015" ng-change="refreshData()")
+	input#datepickerEnd.form-control(type="text" ng-ssmodel="dates.end" value="01/01/2015" ng-change="refreshData()")

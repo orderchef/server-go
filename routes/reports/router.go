@@ -1,10 +1,10 @@
 package reports
 
 import (
-	"github.com/gin-gonic/gin"
-	"time"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"strconv"
+	"time"
 )
 
 func Router(r *gin.RouterGroup) {

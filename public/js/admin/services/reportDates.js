@@ -4,24 +4,25 @@ app.service('reportDates', function () {
 	var self = this;
 	var dateFormat = 'DD/MM/YYYY';
 
-	this.setup = function () {
-		$('.input-daterange').datepicker({
-			orientation: 'top left',
-			todayBtn: 'linked',
-			autoclose: true,
-			format: 'dd/mm/yyyy'
-		});
-
+	this.setup = function (cb) {
+		self.onUpdate = cb;
 		var pickers = [
-			$($('.input-daterange input')[0]),
-			$($('.input-daterange input')[1])
+			$('.range-start'),
+			$('.range-end')
 		];
 
-		pickers[0].datepicker('update', self.start);
-		pickers[1].datepicker('update', self.end);
+		$('#datepicker').datepicker({
+			todayHighlight: true,
+			format: 'dd/mm/yyyy',
+			inputs: $('.range-start, .range-end')
+		});
 
-		pickers[0].on('changeDate', self.datesChanged);
-		pickers[1].on('changeDate', self.datesChanged);
+		pickers[0].datepicker('update', moment().format(dateFormat));
+		pickers[1].datepicker('update', moment().format(dateFormat));
+		$('#datepicker').datepicker('updateDates');
+
+		pickers[0].on('changeDate', self.startDateChanged);
+		pickers[1].on('changeDate', self.endDateChanged);
 
 		var start = localStorage['report_start'];
 		var end = localStorage['report_end'];
@@ -33,31 +34,39 @@ app.service('reportDates', function () {
 			end = Date.now()
 		}
 
-		start = new Date(parseInt(start));
-		end = new Date(parseInt(end));
+		self.start = new Date(parseInt(start));
+		self.end = new Date(parseInt(end));
 
-		pickers[0].datepicker('update', start);
-		pickers[1].datepicker('update', end);
+		if (self.start.valueOf() == 'NaN' || self.end.valueOf() == 'NaN') {
+			return;
+		}
 
-		self.start = moment(start).format(dateFormat);
-		self.end = moment(end).format(dateFormat);
+		pickers[0].datepicker('update', self.start);
+		pickers[1].datepicker('update', self.end);
+		$('#datepicker').datepicker('updateDates');
 	}
 
-	this.start = moment().format(dateFormat);
-	this.end = moment().format(dateFormat);
+	this.start = new Date;
+	this.end = new Date;
+	this.onUpdate = null;
 
-	this.datesChanged = function () {
-		localStorage['report_start'] = self.getDate(self.start).valueOf();
-		localStorage['report_end'] = self.getDate(self.end).valueOf();
-		localStorage['last_saved'] = self.getDate(Date.now());
+	this.startDateChanged = function (ev) {
+		self.start = ev.date;
+		localStorage['report_start'] = moment(self.start).valueOf();
+		localStorage['last_saved'] = Date.now();
+
+		if (typeof self.onUpdate == 'function') self.onUpdate();
 	}
+	this.endDateChanged = function (ev) {
+		self.end = ev.date;
+		localStorage['report_end'] = moment(self.end).valueOf();
+		localStorage['last_saved'] = Date.now();
 
-	this.getDate = function (date) {
-		return moment(date, dateFormat);
+		if (typeof self.onUpdate == 'function') self.onUpdate();
 	}
 
 	this.getQuery = function () {
-		return '?start=' + self.getDate(self.start).unix() + '&end=' + (self.getDate(self.end).unix() + 86400);
+		return '?start=' + moment(self.start).unix() + '&end=' + (moment(self.end).unix() + 86400);
 	}
 
 	return this;

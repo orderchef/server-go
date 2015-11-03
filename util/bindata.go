@@ -1,21 +1,36 @@
 package util
 
 import (
+	"bytes"
+	"compress/gzip"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strings"
 	"os"
+	"time"
+	"io/ioutil"
 	"path"
 	"path/filepath"
 )
 
-// bindata_read reads the given file from disk. It returns an error on failure.
-func bindata_read(path, name string) ([]byte, error) {
-	buf, err := ioutil.ReadFile(path)
+func bindata_read(data []byte, name string) ([]byte, error) {
+	gz, err := gzip.NewReader(bytes.NewBuffer(data))
 	if err != nil {
-		err = fmt.Errorf("Error reading asset %s at %s: %v", name, path, err)
+		return nil, fmt.Errorf("Read %q: %v", name, err)
 	}
-	return buf, err
+
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, gz)
+	clErr := gz.Close()
+
+	if err != nil {
+		return nil, fmt.Errorf("Read %q: %v", name, err)
+	}
+	if clErr != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
 }
 
 type asset struct {
@@ -23,22 +38,50 @@ type asset struct {
 	info  os.FileInfo
 }
 
-// config_json reads file data from disk. It returns an error on failure.
+type bindata_file_info struct {
+	name string
+	size int64
+	mode os.FileMode
+	modTime time.Time
+}
+
+func (fi bindata_file_info) Name() string {
+	return fi.name
+}
+func (fi bindata_file_info) Size() int64 {
+	return fi.size
+}
+func (fi bindata_file_info) Mode() os.FileMode {
+	return fi.mode
+}
+func (fi bindata_file_info) ModTime() time.Time {
+	return fi.modTime
+}
+func (fi bindata_file_info) IsDir() bool {
+	return false
+}
+func (fi bindata_file_info) Sys() interface{} {
+	return nil
+}
+
+var _config_json = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\x54\x8e\x3d\x6f\x83\x30\x10\x86\x67\xfc\x2b\xaa\x9b\x2b\x54\x5a\x15\x04\x53\xa7\x0e\x9d\xca\xd0\x0e\x5d\x2a\x17\x0e\x41\xf1\x17\x3e\x93\x04\x45\xfc\xf7\xf8\x82\x92\x28\xf2\x72\x7a\x5e\xdf\xbd\xcf\x51\x24\xa0\x17\x9a\x14\x54\x0f\x71\x4e\xa0\xb7\x14\xe2\x0c\xd9\x73\x91\x3e\xc5\x97\xc1\x23\xe3\x99\xd0\x33\xf6\xd6\x86\x8d\x38\x49\xc4\xe4\xe0\x3c\x12\xe9\x99\x86\x66\x0b\x8c\xd4\xc8\x81\xf5\x2d\xfa\xa6\xc7\x0e\x44\xb2\xc6\x04\x28\xfe\x1b\xac\xf9\x6d\xff\xee\x0a\xaa\xfc\xa5\x28\x79\x15\xb4\x34\xad\x1f\xd4\xd5\x85\x4b\x2f\xd7\xb4\x0c\xf8\x9f\x8e\x5e\x6a\xb3\xbc\x05\x54\x2a\xf4\xc8\xc7\xd3\xc6\xea\x9b\xd0\x3e\x96\x9e\x35\xeb\x2e\xc3\xf2\x23\x77\xef\x93\xfb\xfe\xf9\x7c\xfd\x1a\x77\xc5\x52\xb3\x88\x58\xc5\x29\x00\x00\xff\xff\xbe\x04\x3e\x2a\xf4\x00\x00\x00")
+
+func config_json_bytes() ([]byte, error) {
+	return bindata_read(
+		_config_json,
+		"config.json",
+	)
+}
+
 func config_json() (*asset, error) {
-	path := "/Users/m/p/gospace/src/lab.castawaylabs.com/orderchef/config.json"
-	name := "config.json"
-	bytes, err := bindata_read(path, name)
+	bytes, err := config_json_bytes()
 	if err != nil {
 		return nil, err
 	}
 
-	fi, err := os.Stat(path)
-	if err != nil {
-		err = fmt.Errorf("Error reading asset info %s at %s: %v", name, path, err)
-	}
-
-	a := &asset{bytes: bytes, info: fi}
-	return a, err
+	info := bindata_file_info{name: "config.json", size: 244, mode: os.FileMode(420), modTime: time.Unix(1443554964, 0)}
+	a := &asset{bytes: bytes, info:  info}
+	return a, nil
 }
 
 // Asset loads and returns the asset for the given name.
