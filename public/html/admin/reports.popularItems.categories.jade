@@ -1,0 +1,14 @@
+include reports.dates.jade
+
+h1 Popular Items Report (By Category)
+
+br
+
+table.table.table-striped(ng-repeat="cat in popularItems")
+	thead: tr
+		th.col-xs-4 # Sold in {{ cat.name }}
+		th.col-xs-8 Item Name
+	tbody
+		tr(ng-repeat="item in cat.items")
+			td {{ item.Quantity }}
+			td {{ item.Name }}

@@ -2,10 +2,11 @@ package orders
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/gin-gonic/gin"
+	"lab.castawaylabs.com/orderchef/database"
 	"lab.castawaylabs.com/orderchef/models"
 	"lab.castawaylabs.com/orderchef/util"
-	"errors"
 )
 
 func addOrderItem(c *gin.Context) {
@@ -20,6 +21,21 @@ func addOrderItem(c *gin.Context) {
 	if orderItem.ItemId <= 0 {
 		util.ServeError(c, errors.New("Invalid Item ID"))
 		return
+	}
+
+	if len(orderItem.Notes) == 0 {
+		exists, err := database.Mysql().SelectInt("select order__item.id from order__item left join order__item_modifier on order__item_modifier.order_item_id=order__item.id where order__item_modifier.order_item_id is null and item_id=? and order_id=? and char_length(order__item.notes) = 0 limit 1", orderItem.ItemId, order.Id)
+		if err != nil {
+			panic(err)
+		}
+		if exists > 0 {
+			if _, err := database.Mysql().Exec("update order__item set quantity = quantity + ? where id=?", orderItem.Quantity, exists); err != nil {
+				panic(err)
+			}
+
+			c.AbortWithStatus(204)
+			return
+		}
 	}
 
 	if err := orderItem.Save(); err != nil {

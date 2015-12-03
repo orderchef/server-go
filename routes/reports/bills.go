@@ -48,8 +48,9 @@ func getPopularItems(c *gin.Context) {
 	var popularItems []struct {
 		Quantity int    `db:"ex"`
 		Name     string `db:"name"`
+		Category string `db:"category"`
 	}
-	if _, err := database.Mysql().Select(&popularItems, "select count(1) as ex, item.name from order__group join order__group_member on order__group_member.group_id=order__group.id join order__item on order__item.order_id=order__group_member.id join item on item.id=order__item.item_id where order__group.cleared=1 and (order__group.cleared_when between ? and ?) group by item.id order by ex DESC", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05")); err != nil {
+	if _, err := database.Mysql().Select(&popularItems, "select count(1) as ex, item.name, category.name as category from order__group join order__group_member on order__group_member.group_id=order__group.id join order__item on order__item.order_id=order__group_member.id join item on item.id=order__item.item_id join category on category.id=item.category_id where order__group.cleared=1 and (order__group.cleared_when between ? and ?) group by item.id order by ex DESC", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05")); err != nil {
 		panic(err)
 	}
 

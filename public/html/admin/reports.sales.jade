@@ -12,7 +12,7 @@ table.table.table-striped
 		th Category
 		th Amount
 	tbody
-		tr(ng-repeat="(c, val) in cash")
+		tr(ng-repeat="(c, val) in cash track by $index")
 			td {{ c }}
 			td £{{ val.toFixed(2) }}
 		tr

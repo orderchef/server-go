@@ -17,10 +17,15 @@ html(ng-app="orderchef")
           li: a(ui-sref="reports.bills") Bills Report
           li: a(ui-sref="reports.cash") Cash Report
           li: a(ui-sref="reports.sales") Sales Report
-          li: a(ui-sref="reports.popularItems") Sold Items Report
+          li.dropdown
+            a.dropdown-toggle(href="" data-toggle="dropdown") Sold Items Report&nbsp;
+              span.caret
+            ul.dropdown-menu
+              li: a(ui-sref="reports.popularItems") All
+              li: a(ui-sref="reports.popularItemsCategories") By Category
         ul.nav.navbar-nav.pull-right
           li.dropdown
-            a.dropdown-toggle(href="" data-toggle="dropdown") Config
+            a.dropdown-toggle(href="" data-toggle="dropdown") Config&nbsp;
               span.caret
             ul.dropdown-menu
               li: a(ui-sref="config.table_types") Table Types

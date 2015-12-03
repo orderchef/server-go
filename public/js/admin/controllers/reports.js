@@ -159,6 +159,38 @@ app.controller('PopularItemsReportCtrl', function ($scope, $http, reportDates) {
 	$scope.refreshData();
 });
 
+app.controller('PopularItemsReportCategoriesCtrl', function ($scope, $http, reportDates) {
+	reportDates.setup(function () {
+		$scope.refreshData();
+	});
+
+	$scope.refreshData = function () {
+		$http.get('/reports/popularItems' + reportDates.getQuery()).success(function(popularItems) {
+			var categories = {};
+
+			popularItems.forEach(function (popItem) {
+				if (!categories[popItem.Category]) {
+					categories[popItem.Category] = {
+						items: [],
+						name: popItem.Category
+					}
+				}
+
+				categories[popItem.Category].items.push(popItem);
+			});
+
+			$scope.popularItems = [];
+			for (var key in categories) {
+				if (!categories.hasOwnProperty(key)) continue;
+
+				$scope.popularItems.push(categories[key]);
+			}
+		});
+	}
+
+	$scope.refreshData();
+});
+
 app.controller('SalesReportCtrl', function ($scope, $http, $modal, $rootScope, reportDates, $interpolate) {
 	$scope.dates = reportDates;
 
