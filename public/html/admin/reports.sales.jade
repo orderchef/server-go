@@ -1,0 +1,23 @@
+include reports.dates.jade
+
+h1 Sales Report
+	.btn-group.pull-right
+		button.btn.btn-default(ng-click="settings()"): i.fa.fa-cogs.fa-fw
+		button.btn.btn-success(ng-click="createReport()") New Report
+
+br
+
+table.table.table-striped
+	thead: tr
+		th Category
+		th Amount
+	tbody
+		tr(ng-repeat="(c, val) in cash")
+			td {{ c }}
+			td £{{ val.toFixed(2) }}
+		tr
+			td --
+			td --
+		tr
+			th Gross
+			td {{ gross }}
