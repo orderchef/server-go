@@ -13,12 +13,14 @@ h3 Total: £{{ total }}
 
 table.table.table-striped
 	thead: tr
+		th Bill ID
 		th Date
 		th Payment Method
 		th Covers
 		th Amount
 	tbody
 		tr(ng-repeat="bill in bills")
+			td \#{{ bill.id }}
 			td {{ bill.printed_atFormatted }}
 			td {{ bill.payment_method.name }}
 			td {{ bill.covers }}
@@ -28,7 +30,8 @@ table.table.table-striped
 			td &nbsp;
 			td &nbsp;
 			td &nbsp;
+			td &nbsp;
 		tr
-			th(colspan="2") Total
+			th(colspan="3") Total
 			th {{ coversTotal }}
 			th £{{ total }}
