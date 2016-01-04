@@ -28,6 +28,7 @@ func Router(r *gin.RouterGroup) {
 			api.POST("/print", printBill)
 			api.GET("/payment", getBillPayments)
 			api.PUT("/payment", setBillPayment)
+			api.PUT("/extras/:extra_id", setBillExtra)
 		}(api.Group("/bill/:bill_id"))
 	}(r.Group("/order-group/:order_group_id"))
 

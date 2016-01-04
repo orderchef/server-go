@@ -20,6 +20,10 @@ import (
 var billReceipt *template.Template
 
 func init() {
+	CompileCustomerReceipt()
+}
+
+func CompileCustomerReceipt() {
 	db := database.Mysql()
 
 	billTemplate, err := db.SelectStr("select value from config where name='customer_bill'")
@@ -37,12 +41,11 @@ func init() {
 	billReceipt = tmpl
 }
 
-// get totals - items that are paid, amounts
-func getBillTotals(c *gin.Context) {
+func getBillTotal(c *gin.Context) *float64 {
 	db := database.Mysql()
 	group, err := getGroupById(c)
 	if err != nil {
-		return
+		return nil
 	}
 
 	total, err := db.SelectFloat("select sum(item.price * oi.quantity) from order__group_member join order__item as oi on oi.order_id=order__group_member.id join item on item.id=oi.item_id where group_id=?", group.Id)
@@ -55,13 +58,52 @@ func getBillTotals(c *gin.Context) {
 		totalModifiers = 0
 	}
 
+	var extras []struct {
+		models.ConfigBillItem
+		Quantity int `db:"quantity"`
+	}
+	if _, err := db.Select(&extras, "select order__bill_extra.quantity as quantity, cbi.* from order__bill_extra join order__bill as bill on bill.id = order__bill_extra.bill_id join config__bill_item as cbi on cbi.id = order__bill_extra.bill_item_id where bill.group_id=?", group.Id); err != nil {
+		panic(err)
+	}
+
+	for _, extra := range extras {
+		if extra.IsPercent == true {
+			continue
+		}
+
+		total += float64(extra.Price) * float64(extra.Quantity)
+	}
+
+	for _, extra := range extras {
+		if extra.IsPercent != true {
+			continue
+		}
+
+		total += (float64(extra.Price) / 100.0) * total * float64(extra.Quantity)
+	}
+
 	total += totalModifiers
 
-	methods, _ := db.Select(models.OrderBill{}, "select sum(total) as paid_amount, payment_method_id from order__bill_payment join order__bill as bill on bill.id = order__bill_payment.bill_id where bill.group_id=? group by payment_method_id", group.Id)
+	return &total
+}
+
+// get totals - items that are paid, amounts
+func getBillTotals(c *gin.Context) {
+	total := getBillTotal(c)
+	if total == nil {
+		return
+	}
+
+	group, err := getGroupById(c)
+	if err != nil {
+		return
+	}
+
+	methods, _ := database.Mysql().Select(models.OrderBill{}, "select sum(total) as paid_amount, payment_method_id from order__bill_payment join order__bill as bill on bill.id = order__bill_payment.bill_id where bill.group_id=? group by payment_method_id", group.Id)
 
 	c.JSON(200, map[string]interface{}{
 		"paid":  methods,
-		"total": total,
+		"total": *total,
 	})
 }
 
@@ -216,27 +258,44 @@ func printBill(c *gin.Context) {
 		panic(err)
 	}
 
+	total := getBillTotal(c)
+	if total == nil {
+		return
+	}
+
+	var extras []struct {
+		models.ConfigBillItem
+		Quantity       int    `db:"quantity"`
+		PriceFormatted string `db:"-"`
+	}
+	if _, err := db.Select(&extras, "select cbi.*, order__bill_extra.quantity from order__bill_extra join config__bill_item as cbi on cbi.id = order__bill_extra.bill_item_id where quantity > 0 and bill_id=?", bill.ID); err != nil {
+		panic(err)
+	}
+	for i, extra := range extras {
+		preSymbol := "£"
+		postSymbol := ""
+
+		if extra.IsPercent {
+			preSymbol = ""
+			postSymbol = "%"
+		}
+
+		extras[i].PriceFormatted = preSymbol + fmt.Sprintf("%.2f", extra.Price*float32(extra.Quantity)) + postSymbol
+	}
+
 	printData := map[string]interface{}{}
 	printData["time"] = time.Now().Format("02-01-2006 15:04")
 	printData["billID"] = bill.ID
-	printData["total"] = bill.Total
-	printData["totalFormatted"] = fmt.Sprintf("%.2f", bill.Total)
+	printData["total"] = *total
+	printData["totalFormatted"] = fmt.Sprintf("%.2f", *total)
 	printData["items"] = bill.Items
+	printData["extras"] = extras
 	printData["table_name"] = table.Name
 
 	buf := new(bytes.Buffer)
 	billReceipt.Execute(buf, printData)
 
 	buffer := gopos.RenderTemplate(buf.String())
-
-	// data := map[string]interface{}{
-	// 	"print": buffer.String(),
-	// }
-
-	// jsonBlob, err := json.Marshal(data)
-	// if err != nil {
-	// 	panic(err)
-	// }
 
 	num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print.receipt", buffer.String()))
 	if err != nil {
@@ -318,4 +377,29 @@ func getBillPayments(c *gin.Context) {
 	}
 
 	c.JSON(200, payments)
+}
+
+func setBillExtra(c *gin.Context) {
+	bill := c.MustGet("bill").(models.OrderBill)
+
+	var extra models.OrderBillExtra
+	if err := c.Bind(&extra); err != nil {
+		c.JSON(400, err)
+		return
+	}
+
+	extra.BillID = bill.ID
+	if extra.Quantity <= 0 {
+		extra.Quantity = 0
+	}
+
+	if _, err := database.Mysql().Exec("delete from order__bill_extra where bill_item_id=? and bill_id=?", extra.BillItemID, bill.ID); err != nil {
+		panic(err)
+	}
+
+	if _, err := database.Mysql().Exec("insert into order__bill_extra set bill_id=?, bill_item_id=?, quantity=?", bill.ID, extra.BillItemID, extra.Quantity); err != nil {
+		panic(err)
+	}
+
+	c.AbortWithStatus(204)
 }

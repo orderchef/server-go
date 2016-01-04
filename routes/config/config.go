@@ -8,6 +8,7 @@ import (
 	"lab.castawaylabs.com/orderchef/routes/config/modifiers"
 	"lab.castawaylabs.com/orderchef/routes/config/orderType"
 	"lab.castawaylabs.com/orderchef/routes/config/tableType"
+	"lab.castawaylabs.com/orderchef/routes/orders"
 	"lab.castawaylabs.com/orderchef/util"
 	"log"
 )
@@ -72,6 +73,13 @@ func saveConfigByKey(c *gin.Context) {
 	if _, err := db.Exec("insert into config (name, value) values (?, ?) on duplicate key update value=?", key.Name, key.Value, key.Value); err != nil {
 		c.AbortWithStatus(500)
 		return
+	}
+
+	switch key.Name {
+	case "customer_bill":
+		orders.CompileCustomerReceipt()
+	case "kitchen_receipt":
+		orders.CompileKitchenReceipt()
 	}
 
 	c.AbortWithStatus(204)

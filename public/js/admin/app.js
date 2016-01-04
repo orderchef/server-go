@@ -186,8 +186,18 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 	})
 	.state('reports.bills', {
 		url: '/bills',
+		abstract: true,
+		template: '<ui-view></ui-view>'
+	})
+	.state('reports.bills.bills', {
+		url: '',
 		templateUrl: base + '/reports.bills.html',
 		controller: 'ReportBillsCtrl'
+	})
+	.state('reports.bills.extras', {
+		url: '/extras',
+		templateUrl: base + '/reports.bills.extras.html',
+		controller: 'BillExtrasCtrl'
 	})
 	.state('reports.cash', {
 		url: '/cash',

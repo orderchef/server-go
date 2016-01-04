@@ -37,6 +37,43 @@ app.controller('ReportBillsCtrl', function ($scope, $http, reportDates) {
 	}
 });
 
+app.controller('BillExtrasCtrl', function ($scope, $http, reportDates) {
+	$scope.dates = reportDates;
+
+	reportDates.setup(function () {
+		$scope.refreshData();
+	});
+
+	$http.get('/config/payment-methods').success(function (payment_methods) {
+		$scope.payment_methods = payment_methods;
+		$scope.refreshData();
+	});
+
+	$scope.refreshData = function () {
+		$http.get('/reports/bills/extras' + reportDates.getQuery()).success(function(bills) {
+			$scope.total = bills.total;
+			$scope.bills = bills.bills;
+			$scope.unclearedTables = bills.unclearedTables;
+
+			$scope.coversTotal = 0;
+
+			for (var i = 0; i < $scope.bills.length; i++) {
+				var bill = $scope.bills[i];
+				bill.printed_atFormatted = moment(bill.printed_at).format('Do MMM YYYY hh:mm:ss');
+				bill.totalFormatted = (Math.round(bill.total * 100) / 100).toFixed(2);
+
+				$scope.coversTotal += bill.covers;
+
+				for (var x = 0; x < $scope.payment_methods.length; x++) {
+					if (bill.payment_method_id == $scope.payment_methods[x].id) {
+						bill.payment_method = $scope.payment_methods[x];
+					}
+				}
+			}
+		})
+	}
+});
+
 app.controller('ReportCashCtrl', function ($scope, $http, $modal, $rootScope, reportDates, $interpolate) {
 	$scope.dates = reportDates;
 

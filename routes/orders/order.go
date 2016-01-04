@@ -18,6 +18,10 @@ import (
 var kitchenReceipt *template.Template
 
 func init() {
+	CompileKitchenReceipt()
+}
+
+func CompileKitchenReceipt() {
 	db := database.Mysql()
 
 	templateString, err := db.SelectStr("select value from config where name='kitchen_receipt'")

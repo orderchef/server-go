@@ -10,6 +10,7 @@ import (
 func Router(r *gin.RouterGroup) {
 	// bills report
 	r.GET("/bills", getBillsReport)
+	r.GET("/bills/extras", getBillsWithExtras)
 
 	// cash report
 	r.GET("/cash", getCashReport)
@@ -19,6 +20,7 @@ func Router(r *gin.RouterGroup) {
 	// Popular items report
 	r.GET("/popularItems", getPopularItems)
 
+	// Sales report
 	r.GET("/sales", getSalesReport)
 	r.POST("/sales", createSalesReport)
 }

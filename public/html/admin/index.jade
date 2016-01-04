@@ -14,7 +14,13 @@ html(ng-app="orderchef")
     nav.navbar.navbar-default
       .container-fluid
         ul.nav.navbar-nav
-          li: a(ui-sref="reports.bills") Bills Report
+          li.dropdown
+            a.dropdown-toggle(href="" data-toggle="dropdown") Bills&nbsp;
+              span.caret
+            ul.dropdown-menu
+              li: a(ui-sref="reports.bills.bills") Bills
+              li: a(ui-sref="reports.bills.extras") With Extras
+
           li: a(ui-sref="reports.cash") Cash Report
           li: a(ui-sref="reports.sales") Sales Report
           li.dropdown
