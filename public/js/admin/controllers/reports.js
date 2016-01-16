@@ -22,7 +22,7 @@ app.controller('ReportBillsCtrl', function ($scope, $http, reportDates) {
 
 			for (var i = 0; i < $scope.bills.length; i++) {
 				var bill = $scope.bills[i];
-				bill.printed_atFormatted = moment(bill.printed_at).format('Do MMM YYYY hh:mm:ss');
+				bill.printed_atFormatted = moment(bill.printed_at).format('Do MMM YYYY HH:mm:ss');
 				bill.totalFormatted = (Math.round(bill.total * 100) / 100).toFixed(2);
 
 				$scope.coversTotal += bill.covers;
