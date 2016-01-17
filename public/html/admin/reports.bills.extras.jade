@@ -28,6 +28,9 @@ table.table.table-striped
 			td {{ bill.payment_method.name }}
 			td {{ bill.covers }}
 			td £{{ bill.totalFormatted }}
+				p(ng-repeat="extra in bill.extras" style="margin: 0;")
+						span.text-muted(ng-if="extra.is_percent") £{{ (extra.quantity*(extra.price/100)*bill.total).toFixed(2)  }}
+						span.text-muted(ng-if="!extra.is_percent") {{ extra.price*extra.quantity | currency:"£" }}
 		tr
 			td &nbsp;
 			td &nbsp;

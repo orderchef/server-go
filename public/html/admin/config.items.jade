@@ -1,17 +1,19 @@
 .pull-right: a.btn.btn-default(ui-sref="config.item({ item_id: 'new' })") Add Item
 .clearfix
 
-table.table
-  thead: tr
-    th ID
-    th Name
-    th Price
-    th &nbsp;
-  tbody: tr(ng-repeat="item in items")
-    td {{ item.id }}
-    td {{ item.name }}
-    td {{ item.price }}
-    td
-      .btn-group.pull-right
-        a.btn.btn-default.btn-xs(ui-sref="config.item({ item_id: {{ item.id }} })"): i.fa.fa-edit.fa-fw
-        a.btn.btn-danger.btn-xs(ng-click="remove(item)"): i.fa.fa-times.fa-fw
+div(ng-repeat="category in categories")
+  h2 {{ category.name }}
+  table.table
+    thead: tr
+      th.col-xs-1 ID
+      th.col-xs-7 Name
+      th.col-xs-3 Price
+      th.col-xs-2 &nbsp;
+    tbody: tr(ng-repeat="item in category.items")
+      td {{ item.id }}
+      td {{ item.name }}
+      td {{ item.price|currency:"£" }}
+      td
+        .btn-group.pull-right
+          a.btn.btn-default.btn-xs(ui-sref="config.item({ item_id: {{ item.id }} })"): i.fa.fa-edit.fa-fw
+          a.btn.btn-danger.btn-xs(ng-click="remove(item)"): i.fa.fa-times.fa-fw

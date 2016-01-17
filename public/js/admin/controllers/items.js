@@ -2,8 +2,19 @@ var app = angular.module('orderchef');
 
 app.controller('ItemsCtrl', function ($scope, $http) {
   $scope.refresh = function () {
-    $http.get('/items').success(function (items) {
-      $scope.items = items;
+    $http.get('/categories').success(function (categories) {
+      $http.get('/items').success(function (items) {
+        for (var i = 0;i<categories.length;i++) {
+          categories[i].items = [];
+          for (var j = 0;j<items.length;j++) {
+            if (items[j].category_id == categories[i].id) {
+              categories[i].items.push(items[j])
+            }
+          }
+        }
+        $scope.items = items;
+        $scope.categories = categories;
+      })
     });
   }
 
