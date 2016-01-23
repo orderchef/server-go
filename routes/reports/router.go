@@ -23,6 +23,8 @@ func Router(r *gin.RouterGroup) {
 	// Sales report
 	r.GET("/sales", getSalesReport)
 	r.POST("/sales", createSalesReport)
+
+	r.GET("/extras", getExtrasReport)
 }
 
 func getDate(dateString string) (*time.Time, error) {

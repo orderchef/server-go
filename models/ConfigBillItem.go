@@ -7,7 +7,7 @@ import (
 type ConfigBillItem struct {
 	ID        int     `db:"id" json:"id" form:"-"`
 	Name      string  `db:"name" json:"name"`
-	Price     float32 `db:"price" json:"price"`
+	Price     float64 `db:"price" json:"price"`
 	IsPercent bool    `db:"is_percent" json:"is_percent"`
 }
 

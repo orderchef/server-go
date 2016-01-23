@@ -19,6 +19,11 @@ import (
 
 var billReceipt *template.Template
 
+type extra struct {
+	models.ConfigBillItem
+	models.OrderBillExtra
+}
+
 func init() {
 	CompileCustomerReceipt()
 }
@@ -41,11 +46,11 @@ func CompileCustomerReceipt() {
 	billReceipt = tmpl
 }
 
-func getBillTotal(c *gin.Context) *float64 {
+func getBillTotal(c *gin.Context) (*float64, *[]extra) {
 	db := database.Mysql()
 	group, err := getGroupById(c)
 	if err != nil {
-		return nil
+		return nil, nil
 	}
 
 	total, err := db.SelectFloat("select sum(item.price * oi.quantity) from order__group_member join order__item as oi on oi.order_id=order__group_member.id join item on item.id=oi.item_id where group_id=?", group.Id)
@@ -58,38 +63,39 @@ func getBillTotal(c *gin.Context) *float64 {
 		totalModifiers = 0
 	}
 
-	var extras []struct {
-		models.ConfigBillItem
-		Quantity int `db:"quantity"`
-	}
-	if _, err := db.Select(&extras, "select order__bill_extra.quantity as quantity, cbi.* from order__bill_extra join order__bill as bill on bill.id = order__bill_extra.bill_id join config__bill_item as cbi on cbi.id = order__bill_extra.bill_item_id where bill.group_id=?", group.Id); err != nil {
+	var extras []extra
+	if _, err := db.Select(&extras, "select order__bill_extra.quantity, order__bill_extra.bill_item_id, cbi.is_percent, cbi.price, cbi.name from order__bill_extra join order__bill as bill on bill.id = order__bill_extra.bill_id join config__bill_item as cbi on cbi.id = order__bill_extra.bill_item_id where bill.group_id=?", group.Id); err != nil {
 		panic(err)
 	}
 
-	for _, extra := range extras {
+	for i, extra := range extras {
 		if extra.IsPercent == true {
 			continue
 		}
 
-		total += float64(extra.Price) * float64(extra.Quantity)
+		price := float64(extra.Price) * float64(extra.Quantity)
+		extras[i].ItemPrice = &price
+		total += price
 	}
 
-	for _, extra := range extras {
+	for i, extra := range extras {
 		if extra.IsPercent != true {
 			continue
 		}
 
-		total += (float64(extra.Price) / 100.0) * total * float64(extra.Quantity)
+		price := (float64(extra.Price) / 100.0) * total * float64(extra.Quantity)
+		extras[i].ItemPrice = &price
+		total += price
 	}
 
 	total += totalModifiers
 
-	return &total
+	return &total, &extras
 }
 
 // get totals - items that are paid, amounts
 func getBillTotals(c *gin.Context) {
-	total := getBillTotal(c)
+	total, _ := getBillTotal(c)
 	if total == nil {
 		return
 	}
@@ -210,6 +216,17 @@ func updateBill(c *gin.Context) {
 		}
 	}
 
+	total, extras := getBillTotal(c)
+	if total != nil {
+		bill.Total = *total
+
+		for _, extra := range *extras {
+			if _, err := db.Exec("update order__bill_extra set item_price=? where bill_id=? and bill_item_id=?", extra.ItemPrice, bill.ID, extra.BillItemID); err != nil {
+				panic(err)
+			}
+		}
+	}
+
 	// if bill.Paid = false; roundPrice(float64(bill.PaidAmount)) == roundPrice(float64(bill.Total)) && bill.Total > 0 {
 	// 	bill.Paid = true
 	// }
@@ -258,7 +275,7 @@ func printBill(c *gin.Context) {
 		panic(err)
 	}
 
-	total := getBillTotal(c)
+	total, _ := getBillTotal(c)
 	if total == nil {
 		return
 	}
@@ -280,7 +297,7 @@ func printBill(c *gin.Context) {
 			postSymbol = "%"
 		}
 
-		extras[i].PriceFormatted = preSymbol + fmt.Sprintf("%.2f", extra.Price*float32(extra.Quantity)) + postSymbol
+		extras[i].PriceFormatted = preSymbol + fmt.Sprintf("%.2f", extra.Price*float64(extra.Quantity)) + postSymbol
 	}
 
 	printData := map[string]interface{}{}
@@ -326,7 +343,7 @@ func splitBills(c *gin.Context) {
 
 	var postData struct {
 		Covers   int     `json:"covers"`
-		PerCover float32 `json:"perCover"`
+		PerCover float64 `json:"perCover"`
 	}
 
 	if err := c.Bind(&postData); err != nil {

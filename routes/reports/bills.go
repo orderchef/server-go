@@ -22,7 +22,7 @@ func getBillsReport(c *gin.Context) {
 		panic(err)
 	}
 
-	var total float32
+	var total float64
 	for _, bill := range bills {
 		total += bill.Total
 	}
@@ -65,7 +65,7 @@ func getBillsWithExtras(c *gin.Context) {
 		}
 	}
 
-	var total float32
+	var total float64
 	for _, bill := range bills {
 		total += bill.Total
 	}

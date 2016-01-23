@@ -11,7 +11,7 @@ type OrderBill struct {
 
 	GroupID int     `db:"group_id" json:"group_id"`
 	Paid    bool    `db:"paid" json:"paid"`
-	Total   float32 `db:"total" json:"total"`
+	Total   float64 `db:"total" json:"total"`
 
 	PrintedAt *time.Time `db:"printed_at" json:"printed_at"`
 	CreatedAt time.Time  `db:"created" json:"created"`
@@ -25,10 +25,10 @@ type OrderBillItem struct {
 	BillID             int     `db:"bill_id" json:"bill_id"`
 	OrderItemID        *int    `db:"order_item_id" json:"order_item_id"`
 	ItemName           string  `db:"item_name" json:"item_name"`
-	ItemPrice          float32 `db:"item_price" json:"item_price"`
+	ItemPrice          float64 `db:"item_price" json:"item_price"`
 	ItemPriceFormatted string  `db:"-" json:"-" form:"-"`
 	Deleted            bool    `db:"deleted" json:"deleted"`
-	Discount           float32 `db:"discount" json:"discount"`
+	Discount           float64 `db:"discount" json:"discount"`
 }
 
 type OrderBillExtra struct {
@@ -38,7 +38,7 @@ type OrderBillExtra struct {
 	Quantity   int `db:"quantity" json:"quantity"`
 
 	ItemName           *string  `db:"item_name" json:"item_name"`
-	ItemPrice          *float32 `db:"item_price" json:"item_price"`
+	ItemPrice          *float64 `db:"item_price" json:"item_price"`
 	ItemPriceFormatted string   `db:"-" json:"-" form:"-"`
 }
 
