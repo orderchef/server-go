@@ -1,0 +1,24 @@
+include reports.dates.jade
+
+br
+
+.alert.alert-danger(ng-if="unclearedTables > 0") Tables which haven't been cleared are&nbsp;
+	strong not included in the bill report!
+	br
+	span Clearing tables the next day will also produce incorrect reports for that day.
+
+h1 Extras Report
+
+
+table.table.table-striped
+	thead: tr
+		th Extra
+		th Price
+		th Quantity
+		th Total
+	tbody
+		tr(ng-repeat="extra in extras")
+			td {{ extra.name }}
+			td {{ extra.is_percent ? (extra.price + " %") : (extra.price|currency:"£") }}
+			td {{ extra.quantity }}
+			td {{ extra.item_price|currency:"£" }}

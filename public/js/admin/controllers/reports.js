@@ -182,6 +182,26 @@ app.controller('ReportCashCtrl', function ($scope, $http, $modal, $rootScope, re
 	}
 });
 
+app.controller('ReportExtrasCtrl', function ($scope, $http, reportDates) {
+	$scope.dates = reportDates;
+
+	reportDates.setup(function () {
+		$scope.refreshData();
+	});
+
+	$http.get('/config/payment-methods').success(function (payment_methods) {
+		$scope.payment_methods = payment_methods;
+		$scope.refreshData();
+	});
+
+	$scope.refreshData = function () {
+		$http.get('/reports/extras' + reportDates.getQuery()).success(function(extras) {
+			$scope.extras = extras.extras;
+			$scope.unclearedTables = extras.unclearedTables;
+		})
+	}
+})
+
 app.controller('PopularItemsReportCtrl', function ($scope, $http, reportDates) {
 	reportDates.setup(function () {
 		$scope.refreshData();
