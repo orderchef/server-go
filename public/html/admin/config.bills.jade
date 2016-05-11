@@ -1,8 +1,10 @@
 form.form-horizontal
   .form-group
-    label.control-label.col-md-3 Kitchen Receipt
-    .col-md-6.col-sm-9
-      textarea.form-control.monotype(ng-model="kitchen_receipt.value" rows="10" style="font-size: 10px;")
+    label.control-label.col-md-2 Kitchen Receipt
+    .col-md-9.col-sm-9
+      input.form-control(ng-model="kitchen_receipt_quantity.value" type="number" min="0" placeholder="Print quantity (default 1)")
+      br
+      textarea.form-control.monotype(ng-model="kitchen_receipt.value" rows="16" style="font-size: 10px;")
       table.table.table-hover
         thead: tr
           th(ng-non-bindable) {{property}}
@@ -18,9 +20,11 @@ form.form-horizontal
             td.monotype .table_name
             td Table Name
   .form-group
-    label.control-label.col-md-3 Customer Bill
-    .col-md-6.col-sm-9
-      textarea.form-control.monotype(ng-model="customer_bill.value" rows="10" style="font-size: 10px;")
+    label.control-label.col-md-2 Customer Bill
+    .col-md-9.col-sm-9
+      input.form-control(ng-model="customer_bill_quantity.value" type="number" min="0" placeholder="Print quantity (default 1)")
+      br
+      textarea.form-control.monotype(ng-model="customer_bill.value" rows="16" style="font-size: 10px;")
       table.table.table-hover
         thead: tr
           th(ng-non-bindable) {{property}}
@@ -38,11 +42,9 @@ form.form-horizontal
           tr
             td.monotype .totalFormatted
             td Bill Total
+
   .form-group
-    label.control-label.col-md-3 Restaurant Bill
-    .col-md-6.col-sm-9: textarea.form-control.monotype(ng-model="restaurant_bill.value" rows="10" style="font-size: 10px;")
-  .form-group
-    .col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="save()") Save
+    .col-md-9.col-md-offset-2: button.btn.btn-success(ng-click="save()") Save
 
 legend
   h3 Square brackets (post-processing)

@@ -1,8 +1,8 @@
 {
 	"mysql": {
-		"host": "192.168.99.100",
+		"host": "127.0.0.1",
 		"user": "root",
-		"pass": "tellthechef",
+		"pass": "xpressmusic",
 		"name": "orderchef"
 	},
 	"session_db": "127.0.0.1:6379",

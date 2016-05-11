@@ -1,5 +1,5 @@
 var redis = require('redis').createClient();
-var id = "receipt"
+var id = "kitchen"
 
 redis.sadd("oc_printers", id);
 redis.subscribe("oc_print." + id);

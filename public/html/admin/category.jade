@@ -6,6 +6,9 @@ form.form-horizontal
 		label.control-label.col-md-3 Description
 		.col-md-9: textarea.form-control(ng-model="category.description")
 	.form-group
+		label.control-label.col-md-3 Print Order
+		.col-md-9: input.form-control(ng-model="category.print_order" type="number" min="0" placeholder="Items printed will be sorted according to this order (ascending order)")
+	.form-group
 		.col-md-9.col-md-offset-3: button.btn.btn-success(ng-click="save()") Save
 
 hr

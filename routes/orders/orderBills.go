@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"strconv"
 	"text/template"
 	"time"
 	// "encoding/json"
 	"database/sql"
+
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/matejkramny/gopos"
@@ -18,6 +20,7 @@ import (
 )
 
 var billReceipt *template.Template
+var billReceiptQuantity int
 
 type extra struct {
 	models.ConfigBillItem
@@ -30,6 +33,13 @@ func init() {
 
 func CompileCustomerReceipt() {
 	db := database.Mysql()
+	billReceiptQuantity = 1
+
+	templateQuantity, _ := db.SelectStr("select value from config where name='customer_bill_quantity'")
+	q, err := strconv.Atoi(templateQuantity)
+	if err == nil && q > 0 {
+		billReceiptQuantity = q
+	}
 
 	billTemplate, err := db.SelectStr("select value from config where name='customer_bill'")
 	if err != nil {
@@ -314,9 +324,13 @@ func printBill(c *gin.Context) {
 
 	buffer := gopos.RenderTemplate(buf.String())
 
-	num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print.receipt", buffer.String()))
-	if err != nil {
-		panic(err)
+	var num_clients int
+	for i := 0; i < billReceiptQuantity; i++ {
+		var err error
+		num_clients, err = redis.Int(redis_c.Do("PUBLISH", "oc_print.receipt", buffer.String()))
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	now := time.Now()

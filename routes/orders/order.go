@@ -3,10 +3,12 @@ package orders
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 	"text/template"
 	"time"
 	// "encoding/json"
 	"database/sql"
+
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/matejkramny/gopos"
@@ -16,6 +18,7 @@ import (
 )
 
 var kitchenReceipt *template.Template
+var kitchenReceiptQuantity int
 
 func init() {
 	CompileKitchenReceipt()
@@ -23,6 +26,13 @@ func init() {
 
 func CompileKitchenReceipt() {
 	db := database.Mysql()
+	kitchenReceiptQuantity = 1
+
+	templateQuantity, _ := db.SelectStr("select value from config where name='kitchen_receipt_quantity'")
+	q, err := strconv.Atoi(templateQuantity)
+	if err == nil && q > 0 {
+		kitchenReceiptQuantity = q
+	}
 
 	templateString, err := db.SelectStr("select value from config where name='kitchen_receipt'")
 	if err != nil {
@@ -183,26 +193,18 @@ func PrintOrder(c *gin.Context) {
 		buf := new(bytes.Buffer)
 		kitchenReceipt.Execute(buf, o)
 		buffer := gopos.RenderTemplate(buf.String())
-		fmt.Println(buf.String())
 
-		// data := map[string]interface{}{
-		// 	"print": buf.String(),
-		// }
+		for i := 0; i < kitchenReceiptQuantity; i++ {
+			// print it!
+			num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print."+printer, buffer.String()))
+			if err != nil {
+				panic(err)
+			}
 
-		// jsonBlob, err := json.Marshal(data)
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// print it!
-		num_clients, err := redis.Int(redis_c.Do("PUBLISH", "oc_print."+printer, buffer.String()))
-		if err != nil {
-			panic(err)
-		}
-
-		if num_clients == 0 {
-			// NOT Printed
-			not_printed = append(not_printed, printer)
+			if num_clients == 0 {
+				// NOT Printed
+				not_printed = append(not_printed, printer)
+			}
 		}
 	}
 

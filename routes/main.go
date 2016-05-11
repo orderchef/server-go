@@ -6,13 +6,12 @@ import (
 	"lab.castawaylabs.com/orderchef/routes/config"
 	"lab.castawaylabs.com/orderchef/routes/items"
 	"lab.castawaylabs.com/orderchef/routes/orders"
-	"lab.castawaylabs.com/orderchef/routes/tables"
 	"lab.castawaylabs.com/orderchef/routes/reports"
+	"lab.castawaylabs.com/orderchef/routes/tables"
 )
 
 func Route(r *gin.RouterGroup) {
 	r.GET("/ping", pong)
-
 	r.GET("/datapack", getDatapack)
 
 	tables.Router(r)

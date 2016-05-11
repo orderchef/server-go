@@ -8,6 +8,7 @@ type Category struct {
 	Id          int    `db:"id" json:"id"`
 	Name        string `db:"name" json:"name"`
 	Description string `db:"description" json:"description"`
+	PrintOrder  int    `db:"print_order" json:"print_order"`
 }
 
 func init() {

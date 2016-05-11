@@ -1,14 +1,15 @@
 package models
 
 import (
-	"lab.castawaylabs.com/orderchef/database"
 	"time"
+
+	"lab.castawaylabs.com/orderchef/database"
 )
 
 type Order struct {
-	Id      int `db:"id" json:"id"`
-	TypeId  int `db:"type_id" json:"type_id"`
-	GroupId int `db:"group_id" json:"group_id"`
+	Id        int        `db:"id" json:"id"`
+	TypeId    int        `db:"type_id" json:"type_id"`
+	GroupId   int        `db:"group_id" json:"group_id"`
 	PrintedAt *time.Time `db:"printed_at" json:"printed_at"`
 }
 
@@ -42,7 +43,7 @@ func (order *Order) GetItems() ([]OrderItem, error) {
 	db := database.Mysql()
 
 	var items []OrderItem
-	if _, err := db.Select(&items, "select * from order__item where order_id=?", order.Id); err != nil {
+	if _, err := db.Select(&items, "select order__item.* from order__item join item on item.id=order__item.item_id join category on category.id=item.category_id where order_id=? order by category.print_order", order.Id); err != nil {
 		return nil, err
 	}
 

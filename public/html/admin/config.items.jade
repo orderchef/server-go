@@ -1,8 +1,9 @@
-.pull-right: a.btn.btn-default(ui-sref="config.item({ item_id: 'new' })") Add Item
+h1(style="margin-top: 0;") Items
+  a.btn.btn-default.pull-right(ui-sref="config.item({ item_id: 'new' })") Add Item
 .clearfix
 
 div(ng-repeat="category in categories")
-  h2 {{ category.name }}
+  h3 {{ category.name }}
   table.table
     thead: tr
       th.col-xs-1 ID

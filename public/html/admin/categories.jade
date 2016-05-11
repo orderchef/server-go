@@ -1,14 +1,17 @@
-.pull-right: a.btn.btn-default(ui-sref="category({ category_id: 'new' })") Add Category
+h1(style="margin-top: 0;") Item Categories
+  a.btn.btn-default.pull-right(ui-sref="category({ category_id: 'new' })") Add Category
 .clearfix
 
 table.table
   thead: tr
     th ID
     th Name
+    th Print order
     th &nbsp;
   tbody: tr(ng-repeat="category in categories")
     td {{ category.id }}
     td {{ category.name }}
+    td {{ category.print_order }}
     td
       .btn-group.pull-right
         a.btn.btn-default.btn-xs(ui-sref="category({ category_id: {{ category.id }} })"): i.fa.fa-edit.fa-fw
